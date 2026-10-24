@@ -49,6 +49,8 @@ describe("Jeu", () => {
         players_max: 6,
         sheet: "wizard-v1",
         lower_wins: false,
+        trait: "annonces et plis",
+        scoring_summary: "Annonce exacte : 20 points + 10 par pli. Sinon −10 par pli d'écart.",
       },
     });
     const wrapper = mount(Jeu, { props: { slug: "wizard" } });
@@ -77,6 +79,7 @@ describe("Jeu", () => {
         players_max: 1,
         sheet: "bingo-v1",
         lower_wins: false,
+        trait: "quine, double quine, carton plein",
       },
     });
     const wrapper = mount(Jeu, { props: { slug: "bingo" } });
@@ -97,6 +100,7 @@ describe("Jeu", () => {
         players_max: 6,
         sheet: "odin-v1",
         lower_wins: true,
+        trait: "le plus bas gagne",
       },
     });
     const wrapper = mount(Jeu, { props: { slug: "odin" } });
@@ -135,6 +139,7 @@ describe("Jeu", () => {
         players_max: 1,
         sheet: "bingo-v1",
         lower_wins: false,
+        trait: "quine, double quine, carton plein",
       },
     });
     const wrapper = mount(Jeu, { props: { slug: "bingo" } });

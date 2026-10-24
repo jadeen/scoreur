@@ -1,7 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { categories, playersLabel } from "../lib/gameCategories";
-import { gameTraits } from "../lib/gameTraits";
 import { supabase } from "../lib/supabase";
 
 const games = ref([]);
@@ -114,7 +113,7 @@ onMounted(async () => {
             <strong>{{ game.name }}</strong>
             <div class="item-tags">
               <span class="tag">{{ playersLabel(game) }}</span>
-              <span v-if="gameTraits[game.sheet]" class="tag">{{ gameTraits[game.sheet] }}</span>
+              <span v-if="game.trait" class="tag">{{ game.trait }}</span>
             </div>
           </div>
           <span class="item-chevron" aria-hidden="true">›</span>

@@ -1,8 +1,6 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { categories, playersLabel } from "../lib/gameCategories";
-import { gameTraits } from "../lib/gameTraits";
-import { scoringRules } from "../lib/scoringRules";
 import { supabase } from "../lib/supabase";
 
 const props = defineProps({
@@ -25,7 +23,7 @@ const traitChips = computed(() => {
     playersLabel(game.value),
     ...categories.filter((c) => c.key !== "solo" && c.test(game.value)).map((c) => c.label),
   ];
-  const trait = gameTraits[game.value.sheet];
+  const trait = game.value.trait;
   if (trait && !chips.some((c) => c.toLowerCase() === trait.toLowerCase())) {
     chips.push(trait);
   }
@@ -72,9 +70,9 @@ watch(
           <span v-for="trait in traitChips" :key="trait" class="tag">{{ trait }}</span>
         </div>
         <p v-if="game.description" class="muted">{{ game.description }}</p>
-        <div v-if="scoringRules[game.sheet]" class="box">
+        <div v-if="game.scoring_summary" class="box">
           <span class="label">Comment on compte</span>
-          <p class="muted">{{ scoringRules[game.sheet] }}</p>
+          <p class="muted">{{ game.scoring_summary }}</p>
         </div>
       </div>
       <div class="jeu-side">

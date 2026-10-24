@@ -24,6 +24,7 @@ const games = [
     players_max: 1,
     sheet: "bingo-v1",
     lower_wins: false,
+    trait: "quine, double quine, carton plein",
   },
   {
     slug: "test-egal",
@@ -32,6 +33,7 @@ const games = [
     players_max: 4,
     sheet: "generique",
     lower_wins: false,
+    trait: null,
   },
   {
     slug: "odin",
@@ -40,6 +42,7 @@ const games = [
     players_max: 6,
     sheet: "odin-v1",
     lower_wins: true,
+    trait: "le plus bas gagne",
   },
   {
     slug: "wizard",
@@ -48,6 +51,7 @@ const games = [
     players_max: 6,
     sheet: "wizard-v1",
     lower_wins: false,
+    trait: "annonces et plis",
   },
 ];
 
