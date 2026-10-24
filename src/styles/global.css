@@ -297,7 +297,6 @@ a:hover {
 
 .jeu-ban {
   height: 140px;
-  margin-top: -24px;
   border-radius: var(--radius-card);
   position: relative;
   overflow: hidden;
@@ -318,8 +317,6 @@ a:hover {
 
 @media (min-width: 1024px) {
   .jeu-ban {
-    margin: 0;
-    border-radius: var(--radius-card);
     height: 220px;
   }
 
