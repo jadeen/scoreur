@@ -114,9 +114,11 @@ async function markAsMoi(player) {
     <h1 class="h1">Mes joueurs</h1>
     <p class="muted">Les joueurs n'ont pas de compte : ce sont des noms dans ton carnet.</p>
 
-    <div v-if="!user" class="note">Connecte-toi avec Google pour gérer ton carnet de joueurs.</div>
+    <div v-if="!user" class="note connect-note">
+      Connecte-toi avec Google pour gérer ton carnet de joueurs.
+    </div>
 
-    <template v-else>
+    <div v-else class="joueurs-layout">
       <form class="add" @submit.prevent="addPlayer">
         <input
           v-model="newName"
@@ -173,6 +175,6 @@ async function markAsMoi(player) {
         </div>
       </div>
       <p v-if="moiError" class="muted error-moi">{{ moiError }}</p>
-    </template>
+    </div>
   </div>
 </template>
