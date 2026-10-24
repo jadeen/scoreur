@@ -1,0 +1,167 @@
+@import './fonts.css';
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--felt);
+  background-image: var(--felt-glow);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+a {
+  color: var(--gold);
+}
+
+a:hover {
+  color: var(--gold-hover);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 20px;
+  border-radius: var(--radius-panel);
+  border: 2px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: var(--gold);
+  color: var(--paper-text);
+  border-color: var(--gold);
+  box-shadow: 0 4px 0 var(--gold-shadow);
+}
+
+.btn.sm {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+/* Barre mobile : logo + action, visible sous 1024px */
+.topbar {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--panel-separator);
+}
+
+/* Navigation desktop : liens horizontaux, visible à partir de 1024px */
+.desktop-nav {
+  display: none;
+  border-bottom: 1px solid var(--panel-separator);
+}
+
+.desktop-nav__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.desktop-nav__inner a.link {
+  color: var(--nav-inactive);
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.desktop-nav__inner a.link.on {
+  color: var(--text);
+  font-weight: 600;
+}
+
+@media (min-width: 1024px) {
+  .topbar {
+    display: none;
+  }
+
+  .desktop-nav {
+    display: block;
+  }
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.15;
+  margin: 0;
+  font-size: 28px;
+}
+
+@media (min-width: 1024px) {
+  .h1 {
+    font-size: 36px;
+  }
+}
+
+.muted {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.note {
+  border: 1px dashed var(--nav-inactive);
+  border-radius: var(--radius-panel);
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--nav-inactive);
+}
