@@ -1,0 +1,14 @@
+# Contexte local pour Claude (non versionné)
+.memories/
+
+# Config locale et secrets
+.env
+.env.*
+!.env.example
+
+# Dépendances et build
+node_modules/
+dist/
+
+# Système
+.DS_Store
