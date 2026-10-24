@@ -27,6 +27,9 @@ const route = useRoute();
       </div>
     </nav>
     <main class="main">
+      <router-link v-if="route.meta.back" class="back-link back-link--page" :to="route.meta.back.to"
+        >‹ {{ route.meta.back.label }}</router-link
+      >
       <router-view />
     </main>
   </div>

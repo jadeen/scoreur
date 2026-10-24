@@ -110,6 +110,19 @@ a:hover {
   flex: 1 1 0;
 }
 
+/* Lien retour affiché au-dessus du contenu, desktop seulement (mobile l'a déjà dans la barre) */
+.back-link--page {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .back-link--page {
+    display: inline-block;
+    font-size: 14px;
+    text-decoration: none;
+  }
+}
+
 /* Navigation desktop : liens horizontaux, visible à partir de 1024px */
 .desktop-nav {
   display: none;
@@ -217,6 +230,16 @@ a:hover {
   border-radius: var(--radius-tile);
 }
 
+.box {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-panel);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .item {
   background: var(--panel);
   border: 1px solid var(--panel-border);
@@ -264,12 +287,35 @@ a:hover {
 .jeu-ban {
   height: 140px;
   margin: -24px -20px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.jeu-ban::after {
+  content: "";
+  position: absolute;
+  right: 24px;
+  bottom: -20px;
+  width: 90px;
+  height: 120px;
+  border-radius: 10px;
+  background: var(--paper);
+  transform: rotate(10deg);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
 }
 
 @media (min-width: 1024px) {
   .jeu-ban {
     margin: 0;
     border-radius: var(--radius-card);
+    height: 220px;
+  }
+
+  .jeu-ban::after {
+    right: 48px;
+    bottom: -30px;
+    width: 120px;
+    height: 160px;
   }
 }
 

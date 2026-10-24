@@ -1,5 +1,7 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { categories, playersLabel } from "../lib/gameCategories";
+import { scoringRules } from "../lib/scoringRules";
 import { supabase } from "../lib/supabase";
 
 const props = defineProps({
@@ -17,27 +19,35 @@ const gameColors = {
   bingo: "var(--game-bingo)",
 };
 
-function playersLabel(g) {
-  if (g.players_min === 1 && g.players_max === 1) return "solo";
-  if (g.players_min === g.players_max) return `${g.players_min} joueurs`;
-  return `${g.players_min} à ${g.players_max} joueurs`;
-}
+const traitChips = computed(() => [
+  playersLabel(game.value),
+  ...categories.filter((c) => c.key !== "solo" && c.test(game.value)).map((c) => c.label),
+]);
 
-onMounted(async () => {
-  const { data, error: fetchError } = await supabase
-    .from("games")
-    .select("*")
-    .eq("slug", props.slug)
-    .maybeSingle();
-  if (fetchError) {
-    error.value = fetchError.message;
-  } else if (!data) {
-    notFound.value = true;
-  } else {
-    game.value = data;
-  }
-  loading.value = false;
-});
+watch(
+  () => props.slug,
+  async (slug) => {
+    loading.value = true;
+    error.value = null;
+    notFound.value = false;
+    game.value = null;
+
+    const { data, error: fetchError } = await supabase
+      .from("games")
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle();
+    if (fetchError) {
+      error.value = fetchError.message;
+    } else if (!data) {
+      notFound.value = true;
+    } else {
+      game.value = data;
+    }
+    loading.value = false;
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -51,9 +61,13 @@ onMounted(async () => {
         <div class="ph jeu-ban" :style="{ background: gameColors[game.slug] }" />
         <h1 class="h1">{{ game.name }}</h1>
         <div class="chips">
-          <span class="chip">{{ playersLabel(game) }}</span>
+          <span v-for="trait in traitChips" :key="trait" class="chip">{{ trait }}</span>
         </div>
         <p v-if="game.description" class="muted">{{ game.description }}</p>
+        <div v-if="scoringRules[game.sheet]" class="box">
+          <span class="label">Comment on compte</span>
+          <p class="muted">{{ scoringRules[game.sheet] }}</p>
+        </div>
       </div>
       <div class="jeu-side">
         <div class="note">

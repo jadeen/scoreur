@@ -17,6 +17,16 @@ function mockGameResponse({ data = null, error = null }) {
   });
 }
 
+function mockGamesBySlug(gamesBySlug) {
+  supabase.from.mockReturnValue({
+    select: () => ({
+      eq: (_column, slug) => ({
+        maybeSingle: () => Promise.resolve({ data: gamesBySlug[slug] ?? null, error: null }),
+      }),
+    }),
+  });
+}
+
 describe("Jeu", () => {
   afterEach(() => {
     vi.clearAllMocks();
@@ -29,7 +39,7 @@ describe("Jeu", () => {
     expect(wrapper.find(".muted").text()).toBe("Chargement…");
   });
 
-  it("affiche le jeu avec son nombre de joueurs et sa description", async () => {
+  it("affiche le jeu avec ses traits, sa description et comment on compte", async () => {
     mockGameResponse({
       data: {
         slug: "wizard",
@@ -37,43 +47,101 @@ describe("Jeu", () => {
         description: "Un jeu de plis.",
         players_min: 3,
         players_max: 6,
+        sheet: "wizard-v1",
+        lower_wins: false,
       },
     });
     const wrapper = mount(Jeu, { props: { slug: "wizard" } });
     await flushPromises();
 
     expect(wrapper.find("h1.h1").text()).toBe("Wizard");
-    expect(wrapper.find(".chip").text()).toBe("3 à 6 joueurs");
-    expect(wrapper.find(".muted").text()).toBe("Un jeu de plis.");
+    const chips = wrapper.findAll(".chip");
+    expect(chips.map((chip) => chip.text())).toEqual(["3 à 6 joueurs", "Par manches"]);
+    expect(wrapper.find(".box .label").text()).toBe("Comment on compte");
+    expect(wrapper.find(".box .muted").text()).toContain("Annonce exacte");
     expect(wrapper.find(".note").text()).toBe(
       "Connecte-toi pour enregistrer une partie de Wizard et suivre tes statistiques.",
     );
   });
 
-  it("affiche le libellé solo pour un jeu à un seul joueur", async () => {
-    mockGameResponse({ data: { slug: "bingo", name: "Bingo", players_min: 1, players_max: 1 } });
+  it("affiche le libellé solo, sans doublon avec les traits dérivés", async () => {
+    mockGameResponse({
+      data: {
+        slug: "bingo",
+        name: "Bingo",
+        players_min: 1,
+        players_max: 1,
+        sheet: "bingo-v1",
+        lower_wins: false,
+      },
+    });
     const wrapper = mount(Jeu, { props: { slug: "bingo" } });
     await flushPromises();
 
-    expect(wrapper.find(".chip").text()).toBe("solo");
+    expect(wrapper.findAll(".chip").map((chip) => chip.text())).toEqual(["solo"]);
   });
 
-  it("affiche un nombre fixe de joueurs quand min et max sont égaux et non solo", async () => {
+  it("n'affiche ni chip de manches ni bloc de règles pour une feuille générique", async () => {
     mockGameResponse({
-      data: { slug: "test-egal", name: "Jeu Test", players_min: 4, players_max: 4 },
+      data: {
+        slug: "test-egal",
+        name: "Jeu Test",
+        players_min: 4,
+        players_max: 4,
+        sheet: "generique",
+      },
     });
     const wrapper = mount(Jeu, { props: { slug: "test-egal" } });
     await flushPromises();
 
-    expect(wrapper.find(".chip").text()).toBe("4 joueurs");
+    expect(wrapper.findAll(".chip").map((chip) => chip.text())).toEqual(["4 joueurs"]);
+    expect(wrapper.findAll(".box")).toHaveLength(0);
   });
 
   it("n'affiche pas de description quand il n'y en a pas", async () => {
-    mockGameResponse({ data: { slug: "bingo", name: "Bingo", players_min: 1, players_max: 1 } });
+    mockGameResponse({
+      data: {
+        slug: "bingo",
+        name: "Bingo",
+        players_min: 1,
+        players_max: 1,
+        sheet: "bingo-v1",
+        lower_wins: false,
+      },
+    });
     const wrapper = mount(Jeu, { props: { slug: "bingo" } });
     await flushPromises();
 
-    expect(wrapper.findAll(".muted")).toHaveLength(0);
+    expect(wrapper.find(".jeu-main > p.muted").exists()).toBe(false);
+  });
+
+  it("recharge le jeu quand le slug change (navigation Wizard -> Odin)", async () => {
+    mockGamesBySlug({
+      wizard: {
+        slug: "wizard",
+        name: "Wizard",
+        players_min: 3,
+        players_max: 6,
+        sheet: "wizard-v1",
+      },
+      odin: {
+        slug: "odin",
+        name: "Odin",
+        players_min: 2,
+        players_max: 6,
+        sheet: "odin-v1",
+        lower_wins: true,
+      },
+    });
+    const wrapper = mount(Jeu, { props: { slug: "wizard" } });
+    await flushPromises();
+    expect(wrapper.find("h1.h1").text()).toBe("Wizard");
+
+    await wrapper.setProps({ slug: "odin" });
+    expect(wrapper.find(".muted").text()).toBe("Chargement…");
+    await flushPromises();
+
+    expect(wrapper.find("h1.h1").text()).toBe("Odin");
   });
 
   it("affiche un message quand le jeu n'existe pas", async () => {

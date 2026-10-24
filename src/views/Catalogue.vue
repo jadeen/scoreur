@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import { categories, playersLabel } from "../lib/gameCategories";
 import { supabase } from "../lib/supabase";
 
 const games = ref([]);
@@ -14,16 +15,6 @@ const gameColors = {
   bingo: "var(--game-bingo)",
 };
 
-const categories = [
-  { key: "solo", label: "Solo", test: (g) => g.players_min === 1 && g.players_max === 1 },
-  {
-    key: "manches",
-    label: "Par manches",
-    test: (g) => g.sheet !== "generique" && !(g.players_min === 1 && g.players_max === 1),
-  },
-  { key: "bas", label: "Le plus bas gagne", test: (g) => g.lower_wins },
-];
-
 function toggleCategory(key) {
   const i = activeCategories.value.indexOf(key);
   if (i === -1) {
@@ -31,12 +22,6 @@ function toggleCategory(key) {
   } else {
     activeCategories.value.splice(i, 1);
   }
-}
-
-function playersLabel(game) {
-  if (game.players_min === 1 && game.players_max === 1) return "solo";
-  if (game.players_min === game.players_max) return `${game.players_min} joueurs`;
-  return `${game.players_min} à ${game.players_max} joueurs`;
 }
 
 const filteredGames = computed(() => {
