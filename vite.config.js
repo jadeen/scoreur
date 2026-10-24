@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
@@ -7,11 +7,8 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
-    env: {
-      // Clé publique (sb_publishable_…), faite pour être exposée côté client — safe à committer.
-      VITE_SUPABASE_URL: "https://jkzjxlupcucrjhlamdrf.supabase.co",
-      VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_sWaEwlzerI5Ifcayws4u_A__-ym8Mb_",
-    },
+    // Valeurs publiques lues depuis .env.test (committé, cf. commentaire du fichier).
+    env: loadEnv("test", process.cwd()),
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],
