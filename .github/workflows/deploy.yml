@@ -22,6 +22,10 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
+      - name: Configurer les variables Supabase
+        run: |
+          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
+          echo "VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" >> .env
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
