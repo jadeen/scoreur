@@ -342,6 +342,12 @@ a:hover {
   gap: 14px;
 }
 
+.chip-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .checkbox-filters {
   display: none;
 }
@@ -466,6 +472,12 @@ a:hover {
   gap: 18px;
 }
 
+.jeu-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 @media (min-width: 1024px) {
   .jeu-layout {
     flex-direction: row;
@@ -476,9 +488,6 @@ a:hover {
   .jeu-main {
     flex: 999 1 560px;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
   }
 
   .jeu-side {
