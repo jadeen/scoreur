@@ -64,56 +64,78 @@ onMounted(async () => {
 <template>
   <div>
     <h1 class="h1">Jeux</h1>
-    <label class="field" for="recherche-jeu">
-      Rechercher
-      <input id="recherche-jeu" v-model="search" type="search" placeholder="Nom d'un jeu" />
-    </label>
+    <div class="catalogue-layout">
+      <div class="filters-col">
+        <label class="field" for="recherche-jeu">
+          Rechercher
+          <input id="recherche-jeu" v-model="search" type="search" placeholder="Nom d'un jeu" />
+        </label>
 
-    <div class="chips">
-      <button
-        type="button"
-        class="chip"
-        :class="{ on: activeCategories.length === 0 }"
-        @click="activeCategories = []"
-      >
-        Tous
-      </button>
-      <button
-        v-for="category in categories"
-        :key="category.key"
-        type="button"
-        class="chip"
-        :class="{ on: activeCategories.includes(category.key) }"
-        @click="toggleCategory(category.key)"
-      >
-        {{ category.label }}
-      </button>
+        <div class="chip-filters">
+          <button
+            type="button"
+            class="chip"
+            :class="{ on: activeCategories.length === 0 }"
+            @click="activeCategories = []"
+          >
+            Tous
+          </button>
+          <button
+            v-for="category in categories"
+            :key="category.key"
+            type="button"
+            class="chip"
+            :class="{ on: activeCategories.includes(category.key) }"
+            @click="toggleCategory(category.key)"
+          >
+            {{ category.label }}
+          </button>
+        </div>
+
+        <div class="checkbox-filters">
+          <span class="label">Filtres</span>
+          <label v-for="category in categories" :key="category.key" class="opt">
+            <input
+              type="checkbox"
+              :checked="activeCategories.includes(category.key)"
+              @change="toggleCategory(category.key)"
+            />
+            {{ category.label }}
+          </label>
+        </div>
+
+        <div class="note filters-note">
+          <strong>Il manque un jeu ?</strong>
+          <span>La proposition de jeux arrive dans une prochaine étape.</span>
+        </div>
+      </div>
+
+      <div class="list-col">
+        <p v-if="loading" class="muted">Chargement du catalogue…</p>
+        <p v-else-if="error" class="muted">Impossible de charger le catalogue pour le moment.</p>
+        <p v-else-if="filteredGames.length === 0" class="muted">
+          Aucun jeu ne correspond à ta recherche.
+        </p>
+
+        <div class="game-list">
+          <router-link
+            v-for="game in filteredGames"
+            :key="game.slug"
+            class="item"
+            :to="{ name: 'jeu', params: { slug: game.slug } }"
+          >
+            <div class="ph item-thumb" :style="{ background: gameColors[game.slug] }" />
+            <div class="t">
+              <strong>{{ game.name }}</strong>
+              <span class="muted">{{ playersLabel(game) }}</span>
+            </div>
+            <span class="item-chevron" aria-hidden="true">›</span>
+          </router-link>
+        </div>
+      </div>
     </div>
 
-    <p v-if="loading" class="muted">Chargement du catalogue…</p>
-    <p v-else-if="error" class="muted">Impossible de charger le catalogue pour le moment.</p>
-    <p v-else-if="filteredGames.length === 0" class="muted">
-      Aucun jeu ne correspond à ta recherche.
-    </p>
-
-    <router-link
-      v-for="game in filteredGames"
-      :key="game.slug"
-      class="item"
-      :to="{ name: 'jeu', params: { slug: game.slug } }"
-    >
-      <div
-        class="ph"
-        :style="{ width: '56px', height: '56px', flexShrink: 0, background: gameColors[game.slug] }"
-      />
-      <div class="t">
-        <strong>{{ game.name }}</strong>
-        <span class="muted">{{ playersLabel(game) }}</span>
-      </div>
-      <span aria-hidden="true">›</span>
-    </router-link>
-
-    <div class="note">
+    <div class="note list-note">
       <strong>Il manque un jeu ?</strong>
       <span>La proposition de jeux arrive dans une prochaine étape.</span>
     </div>

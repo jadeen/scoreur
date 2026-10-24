@@ -184,6 +184,13 @@ a:hover {
   padding: 12px 14px;
   font-size: 13px;
   color: var(--nav-inactive);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.note strong {
+  color: var(--text);
 }
 
 .field {
@@ -263,5 +270,131 @@ a:hover {
   .jeu-ban {
     margin: 0;
     border-radius: var(--radius-card);
+  }
+}
+
+/* Catalogue : liste mobile, colonne de filtres + grille desktop */
+.catalogue-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.filters-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.checkbox-filters {
+  display: none;
+}
+
+.filters-note {
+  display: none;
+}
+
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-thumb {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .catalogue-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .filters-col {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  .list-col {
+    flex: 999 1 640px;
+    min-width: 0;
+  }
+
+  .chip-filters {
+    display: none;
+  }
+
+  .checkbox-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    font-size: 14px;
+  }
+
+  .filters-note {
+    display: flex;
+  }
+
+  .list-note {
+    display: none;
+  }
+
+  .game-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .item-thumb {
+    width: 100%;
+    height: 110px;
+  }
+
+  .item-chevron {
+    display: none;
+  }
+}
+
+/* Page de jeu : une colonne mobile, deux colonnes desktop */
+.jeu-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@media (min-width: 1024px) {
+  .jeu-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .jeu-main {
+    flex: 999 1 560px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .jeu-side {
+    flex: 1 1 360px;
+    min-width: 0;
   }
 }

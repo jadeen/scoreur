@@ -171,4 +171,17 @@ describe("Catalogue", () => {
     expect(wrapper.findAll(".chip")[0].classes()).toContain("on");
     expect(wrapper.findAll(".item")).toHaveLength(4);
   });
+
+  it("filtre aussi via les cases à cocher de la colonne de filtres (desktop)", async () => {
+    mockGamesResponse({ data: games });
+    const wrapper = mount(Catalogue);
+    await flushPromises();
+
+    const checkboxes = wrapper.findAll(".checkbox-filters input[type=checkbox]");
+    expect(checkboxes).toHaveLength(3);
+
+    await checkboxes[0].setValue(true);
+    expect(wrapper.findAll(".item")).toHaveLength(1);
+    expect(wrapper.find(".item .t strong").text()).toBe("Bingo");
+  });
 });

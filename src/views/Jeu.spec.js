@@ -46,7 +46,7 @@ describe("Jeu", () => {
     expect(wrapper.find(".chip").text()).toBe("3 à 6 joueurs");
     expect(wrapper.find(".muted").text()).toBe("Un jeu de plis.");
     expect(wrapper.find(".note").text()).toBe(
-      "Connecte-toi pour enregistrer une partie de Wizard.",
+      "Connecte-toi pour enregistrer une partie de Wizard et suivre tes statistiques.",
     );
   });
 

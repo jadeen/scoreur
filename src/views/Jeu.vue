@@ -46,14 +46,20 @@ onMounted(async () => {
     <p v-else-if="error" class="muted">Impossible de charger ce jeu pour le moment.</p>
     <p v-else-if="notFound" class="muted">Ce jeu n'existe pas.</p>
 
-    <template v-else>
-      <div class="ph jeu-ban" :style="{ background: gameColors[game.slug] }" />
-      <h1 class="h1">{{ game.name }}</h1>
-      <div class="chips">
-        <span class="chip">{{ playersLabel(game) }}</span>
+    <div v-else class="jeu-layout">
+      <div class="jeu-main">
+        <div class="ph jeu-ban" :style="{ background: gameColors[game.slug] }" />
+        <h1 class="h1">{{ game.name }}</h1>
+        <div class="chips">
+          <span class="chip">{{ playersLabel(game) }}</span>
+        </div>
+        <p v-if="game.description" class="muted">{{ game.description }}</p>
       </div>
-      <p v-if="game.description" class="muted">{{ game.description }}</p>
-      <div class="note">Connecte-toi pour enregistrer une partie de {{ game.name }}.</div>
-    </template>
+      <div class="jeu-side">
+        <div class="note">
+          Connecte-toi pour enregistrer une partie de {{ game.name }} et suivre tes statistiques.
+        </div>
+      </div>
+    </div>
   </div>
 </template>
