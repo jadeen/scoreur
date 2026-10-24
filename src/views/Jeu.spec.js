@@ -33,13 +33,15 @@ describe("Jeu", () => {
   });
 
   it("affiche un état de chargement avant la réponse de Supabase", () => {
-    mockGameResponse({ data: { slug: "wizard", name: "Wizard", players_min: 3, players_max: 6 } });
+    mockGameResponse({
+      data: { slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] },
+    });
     const wrapper = mount(Jeu, { props: { slug: "wizard" } });
 
     expect(wrapper.find(".muted").text()).toBe("Chargement…");
   });
 
-  it("affiche le jeu avec ses traits, sa description et comment on compte", async () => {
+  it("affiche le jeu avec ses tags, sa description et comment on compte", async () => {
     mockGameResponse({
       data: {
         slug: "wizard",
@@ -47,9 +49,7 @@ describe("Jeu", () => {
         description: "Un jeu de plis.",
         players_min: 3,
         players_max: 6,
-        sheet: "wizard-v1",
-        lower_wins: false,
-        trait: "annonces et plis",
+        tags: ["par manches", "annonces et plis"],
         scoring_summary: "Annonce exacte : 20 points + 10 par pli. Sinon −10 par pli d'écart.",
       },
     });
@@ -60,7 +60,7 @@ describe("Jeu", () => {
     const chips = wrapper.findAll(".tag");
     expect(chips.map((chip) => chip.text())).toEqual([
       "3 à 6 joueurs",
-      "Par manches",
+      "par manches",
       "annonces et plis",
     ]);
     expect(wrapper.find(".box .label").text()).toBe("Comment on compte");
@@ -70,16 +70,14 @@ describe("Jeu", () => {
     );
   });
 
-  it("affiche le libellé solo et le trait des paliers pour Bingo", async () => {
+  it("n'affiche pas deux fois « solo » quand le tag recoupe le badge joueurs (Bingo)", async () => {
     mockGameResponse({
       data: {
         slug: "bingo",
         name: "Bingo",
         players_min: 1,
         players_max: 1,
-        sheet: "bingo-v1",
-        lower_wins: false,
-        trait: "quine, double quine, carton plein",
+        tags: ["solo", "quine", "double quine", "carton plein"],
       },
     });
     const wrapper = mount(Jeu, { props: { slug: "bingo" } });
@@ -87,20 +85,20 @@ describe("Jeu", () => {
 
     expect(wrapper.findAll(".tag").map((chip) => chip.text())).toEqual([
       "solo",
-      "quine, double quine, carton plein",
+      "quine",
+      "double quine",
+      "carton plein",
     ]);
   });
 
-  it("ne duplique pas le trait quand il recoupe un chip déjà dérivé (Odin)", async () => {
+  it("affiche chaque tag comme un badge séparé (Odin)", async () => {
     mockGameResponse({
       data: {
         slug: "odin",
         name: "Odin",
         players_min: 2,
         players_max: 6,
-        sheet: "odin-v1",
-        lower_wins: true,
-        trait: "le plus bas gagne",
+        tags: ["par manches", "le plus bas gagne"],
       },
     });
     const wrapper = mount(Jeu, { props: { slug: "odin" } });
@@ -108,22 +106,16 @@ describe("Jeu", () => {
 
     expect(wrapper.findAll(".tag").map((chip) => chip.text())).toEqual([
       "2 à 6 joueurs",
-      "Par manches",
-      "Le plus bas gagne",
+      "par manches",
+      "le plus bas gagne",
     ]);
   });
 
-  it("n'affiche ni chip de manches ni bloc de règles pour une feuille générique", async () => {
+  it("n'affiche que le badge joueurs et pas de bloc de règles sans tags ni scoring_summary", async () => {
     mockGameResponse({
-      data: {
-        slug: "test-egal",
-        name: "Jeu Test",
-        players_min: 4,
-        players_max: 4,
-        sheet: "generique",
-      },
+      data: { slug: "test-sans-tag", name: "Jeu Test", players_min: 4, players_max: 4, tags: [] },
     });
-    const wrapper = mount(Jeu, { props: { slug: "test-egal" } });
+    const wrapper = mount(Jeu, { props: { slug: "test-sans-tag" } });
     await flushPromises();
 
     expect(wrapper.findAll(".tag").map((chip) => chip.text())).toEqual(["4 joueurs"]);
@@ -132,15 +124,7 @@ describe("Jeu", () => {
 
   it("n'affiche pas de description quand il n'y en a pas", async () => {
     mockGameResponse({
-      data: {
-        slug: "bingo",
-        name: "Bingo",
-        players_min: 1,
-        players_max: 1,
-        sheet: "bingo-v1",
-        lower_wins: false,
-        trait: "quine, double quine, carton plein",
-      },
+      data: { slug: "bingo", name: "Bingo", players_min: 1, players_max: 1, tags: ["solo"] },
     });
     const wrapper = mount(Jeu, { props: { slug: "bingo" } });
     await flushPromises();
@@ -150,21 +134,8 @@ describe("Jeu", () => {
 
   it("recharge le jeu quand le slug change (navigation Wizard -> Odin)", async () => {
     mockGamesBySlug({
-      wizard: {
-        slug: "wizard",
-        name: "Wizard",
-        players_min: 3,
-        players_max: 6,
-        sheet: "wizard-v1",
-      },
-      odin: {
-        slug: "odin",
-        name: "Odin",
-        players_min: 2,
-        players_max: 6,
-        sheet: "odin-v1",
-        lower_wins: true,
-      },
+      wizard: { slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] },
+      odin: { slug: "odin", name: "Odin", players_min: 2, players_max: 6, tags: [] },
     });
     const wrapper = mount(Jeu, { props: { slug: "wizard" } });
     await flushPromises();

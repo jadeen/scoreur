@@ -1,13 +1,13 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { categories, playersLabel } from "../lib/gameCategories";
+import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
 const games = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const search = ref("");
-const activeCategories = ref([]);
+const activeTags = ref([]);
 
 const gameColors = {
   wizard: "var(--game-wizard)",
@@ -15,12 +15,14 @@ const gameColors = {
   bingo: "var(--game-bingo)",
 };
 
-function toggleCategory(key) {
-  const i = activeCategories.value.indexOf(key);
+const availableTags = computed(() => [...new Set(games.value.flatMap((game) => game.tags))].sort());
+
+function toggleTag(tag) {
+  const i = activeTags.value.indexOf(tag);
   if (i === -1) {
-    activeCategories.value.push(key);
+    activeTags.value.push(tag);
   } else {
-    activeCategories.value.splice(i, 1);
+    activeTags.value.splice(i, 1);
   }
 }
 
@@ -28,10 +30,8 @@ const filteredGames = computed(() => {
   const query = search.value.trim().toLowerCase();
   return games.value.filter((game) => {
     if (query && !game.name.toLowerCase().includes(query)) return false;
-    if (activeCategories.value.length === 0) return true;
-    return categories.some(
-      (category) => activeCategories.value.includes(category.key) && category.test(game),
-    );
+    if (activeTags.value.length === 0) return true;
+    return activeTags.value.some((tag) => game.tags.includes(tag));
   });
 });
 
@@ -59,32 +59,28 @@ onMounted(async () => {
         <button
           type="button"
           class="chip"
-          :class="{ on: activeCategories.length === 0 }"
-          @click="activeCategories = []"
+          :class="{ on: activeTags.length === 0 }"
+          @click="activeTags = []"
         >
           Tous
         </button>
         <button
-          v-for="category in categories"
-          :key="category.key"
+          v-for="tag in availableTags"
+          :key="tag"
           type="button"
           class="chip"
-          :class="{ on: activeCategories.includes(category.key) }"
-          @click="toggleCategory(category.key)"
+          :class="{ on: activeTags.includes(tag) }"
+          @click="toggleTag(tag)"
         >
-          {{ category.label }}
+          {{ tag }}
         </button>
       </div>
 
       <div class="checkbox-filters">
         <span class="label">Filtres</span>
-        <label v-for="category in categories" :key="category.key" class="opt">
-          <input
-            type="checkbox"
-            :checked="activeCategories.includes(category.key)"
-            @change="toggleCategory(category.key)"
-          />
-          {{ category.label }}
+        <label v-for="tag in availableTags" :key="tag" class="opt">
+          <input type="checkbox" :checked="activeTags.includes(tag)" @change="toggleTag(tag)" />
+          {{ tag }}
         </label>
       </div>
 
@@ -113,7 +109,7 @@ onMounted(async () => {
             <strong>{{ game.name }}</strong>
             <div class="item-tags">
               <span class="tag">{{ playersLabel(game) }}</span>
-              <span v-if="game.trait" class="tag">{{ game.trait }}</span>
+              <span v-for="tag in displayTags(game)" :key="tag" class="tag">{{ tag }}</span>
             </div>
           </div>
           <span class="item-chevron" aria-hidden="true">›</span>

@@ -276,6 +276,7 @@ a:hover {
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
+  text-transform: capitalize;
 }
 
 /* Pastille informative compacte (traits d'un jeu), pas un bouton */
@@ -407,6 +408,7 @@ a:hover {
     gap: 8px;
     min-height: 32px;
     font-size: 14px;
+    text-transform: capitalize;
   }
 
   .filters-note {

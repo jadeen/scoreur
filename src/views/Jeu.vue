@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from "vue";
-import { categories, playersLabel } from "../lib/gameCategories";
+import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
 const props = defineProps({
@@ -18,17 +18,7 @@ const gameColors = {
   bingo: "var(--game-bingo)",
 };
 
-const traitChips = computed(() => {
-  const chips = [
-    playersLabel(game.value),
-    ...categories.filter((c) => c.key !== "solo" && c.test(game.value)).map((c) => c.label),
-  ];
-  const trait = game.value.trait;
-  if (trait && !chips.some((c) => c.toLowerCase() === trait.toLowerCase())) {
-    chips.push(trait);
-  }
-  return chips;
-});
+const traitChips = computed(() => [playersLabel(game.value), ...displayTags(game.value)]);
 
 watch(
   () => props.slug,
