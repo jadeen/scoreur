@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import Accueil from "./views/Accueil.vue";
 import Catalogue from "./views/Catalogue.vue";
 import Jeu from "./views/Jeu.vue";
+import Joueurs from "./views/Joueurs.vue";
 
 export const router = createRouter({
   history: createWebHashHistory(),
@@ -19,6 +20,12 @@ export const router = createRouter({
       component: Jeu,
       props: true,
       meta: { back: { to: "/jeux", label: "Jeux" } },
+    },
+    {
+      path: "/joueurs",
+      name: "joueurs",
+      component: Joueurs,
+      meta: { back: { to: "/", label: "Accueil" } },
     },
   ],
 });

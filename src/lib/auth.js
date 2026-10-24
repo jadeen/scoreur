@@ -22,7 +22,10 @@ export function userDisplayName(authUser) {
 }
 
 export function signInWithGoogle() {
-  return supabase.auth.signInWithOAuth({ provider: "google" });
+  return supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: window.location.origin },
+  });
 }
 
 export function signOut() {

@@ -31,9 +31,12 @@ describe("userDisplayName", () => {
 });
 
 describe("signInWithGoogle / signOut", () => {
-  it("déclenche la connexion Google via Supabase", () => {
+  it("déclenche la connexion Google via Supabase, avec retour vers l'origine courante", () => {
     signInWithGoogle();
-    expect(supabase.auth.signInWithOAuth).toHaveBeenCalledWith({ provider: "google" });
+    expect(supabase.auth.signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
   });
 
   it("déclenche la déconnexion via Supabase", () => {

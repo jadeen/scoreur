@@ -30,7 +30,7 @@ const route = useRoute();
         <router-link class="logo" to="/">Scoreur</router-link>
         <router-link class="link" active-class="on" to="/">Accueil</router-link>
         <router-link class="link" active-class="on" to="/jeux">Jeux</router-link>
-        <a class="link" href="#">Mes joueurs</a>
+        <router-link class="link" active-class="on" to="/joueurs">Mes joueurs</router-link>
         <a class="link" href="#">Proposer un jeu</a>
         <span class="desktop-nav__spacer"></span>
         <div v-if="user" class="who">
