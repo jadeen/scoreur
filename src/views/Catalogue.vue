@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { categories, playersLabel } from "../lib/gameCategories";
+import { gameTraits } from "../lib/gameTraits";
 import { supabase } from "../lib/supabase";
 
 const games = ref([]);
@@ -14,6 +15,11 @@ const gameColors = {
   odin: "var(--game-odin)",
   bingo: "var(--game-bingo)",
 };
+
+function itemSubtitle(game) {
+  const trait = gameTraits[game.sheet];
+  return trait ? `${playersLabel(game)} · ${trait}` : playersLabel(game);
+}
 
 function toggleCategory(key) {
   const i = activeCategories.value.indexOf(key);
@@ -112,7 +118,7 @@ onMounted(async () => {
             <div class="ph item-thumb" :style="{ background: gameColors[game.slug] }" />
             <div class="t">
               <strong>{{ game.name }}</strong>
-              <span class="item-meta">{{ playersLabel(game) }}</span>
+              <span class="item-meta">{{ itemSubtitle(game) }}</span>
             </div>
             <span class="item-chevron" aria-hidden="true">›</span>
           </router-link>

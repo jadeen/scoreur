@@ -63,7 +63,7 @@ describe("Catalogue", () => {
     expect(wrapper.find(".muted").text()).toBe("Chargement du catalogue…");
   });
 
-  it("affiche la liste des jeux avec leurs libellés de joueurs", async () => {
+  it("affiche la liste des jeux avec joueurs et trait distinctif", async () => {
     mockGamesResponse({ data: games });
     const wrapper = mount(Catalogue);
     await flushPromises();
@@ -71,9 +71,10 @@ describe("Catalogue", () => {
     const items = wrapper.findAll(".item");
     expect(items).toHaveLength(4);
     expect(items[0].find(".t strong").text()).toBe("Bingo");
-    expect(items[0].find(".t span").text()).toBe("solo");
+    expect(items[0].find(".t span").text()).toBe("solo · quine, double quine, carton plein");
     expect(items[2].find(".t strong").text()).toBe("Odin");
-    expect(items[2].find(".t span").text()).toBe("2 à 6 joueurs");
+    expect(items[2].find(".t span").text()).toBe("2 à 6 joueurs · le plus bas gagne");
+    // Jeu Test (sheet générique) : aucun trait connu, pas de « · » ajouté.
     expect(items[1].find(".t span").text()).toBe("4 joueurs");
   });
 

@@ -56,7 +56,11 @@ describe("Jeu", () => {
 
     expect(wrapper.find("h1.h1").text()).toBe("Wizard");
     const chips = wrapper.findAll(".tag");
-    expect(chips.map((chip) => chip.text())).toEqual(["3 à 6 joueurs", "Par manches"]);
+    expect(chips.map((chip) => chip.text())).toEqual([
+      "3 à 6 joueurs",
+      "Par manches",
+      "annonces et plis",
+    ]);
     expect(wrapper.find(".box .label").text()).toBe("Comment on compte");
     expect(wrapper.find(".box .muted").text()).toContain("Annonce exacte");
     expect(wrapper.find(".note").text()).toBe(
@@ -64,7 +68,7 @@ describe("Jeu", () => {
     );
   });
 
-  it("affiche le libellé solo, sans doublon avec les traits dérivés", async () => {
+  it("affiche le libellé solo et le trait des paliers pour Bingo", async () => {
     mockGameResponse({
       data: {
         slug: "bingo",
@@ -78,7 +82,31 @@ describe("Jeu", () => {
     const wrapper = mount(Jeu, { props: { slug: "bingo" } });
     await flushPromises();
 
-    expect(wrapper.findAll(".tag").map((chip) => chip.text())).toEqual(["solo"]);
+    expect(wrapper.findAll(".tag").map((chip) => chip.text())).toEqual([
+      "solo",
+      "quine, double quine, carton plein",
+    ]);
+  });
+
+  it("ne duplique pas le trait quand il recoupe un chip déjà dérivé (Odin)", async () => {
+    mockGameResponse({
+      data: {
+        slug: "odin",
+        name: "Odin",
+        players_min: 2,
+        players_max: 6,
+        sheet: "odin-v1",
+        lower_wins: true,
+      },
+    });
+    const wrapper = mount(Jeu, { props: { slug: "odin" } });
+    await flushPromises();
+
+    expect(wrapper.findAll(".tag").map((chip) => chip.text())).toEqual([
+      "2 à 6 joueurs",
+      "Par manches",
+      "Le plus bas gagne",
+    ]);
   });
 
   it("n'affiche ni chip de manches ni bloc de règles pour une feuille générique", async () => {
