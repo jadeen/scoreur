@@ -55,7 +55,7 @@ describe("Jeu", () => {
     await flushPromises();
 
     expect(wrapper.find("h1.h1").text()).toBe("Wizard");
-    const chips = wrapper.findAll(".chip");
+    const chips = wrapper.findAll(".tag");
     expect(chips.map((chip) => chip.text())).toEqual(["3 à 6 joueurs", "Par manches"]);
     expect(wrapper.find(".box .label").text()).toBe("Comment on compte");
     expect(wrapper.find(".box .muted").text()).toContain("Annonce exacte");
@@ -78,7 +78,7 @@ describe("Jeu", () => {
     const wrapper = mount(Jeu, { props: { slug: "bingo" } });
     await flushPromises();
 
-    expect(wrapper.findAll(".chip").map((chip) => chip.text())).toEqual(["solo"]);
+    expect(wrapper.findAll(".tag").map((chip) => chip.text())).toEqual(["solo"]);
   });
 
   it("n'affiche ni chip de manches ni bloc de règles pour une feuille générique", async () => {
@@ -94,7 +94,7 @@ describe("Jeu", () => {
     const wrapper = mount(Jeu, { props: { slug: "test-egal" } });
     await flushPromises();
 
-    expect(wrapper.findAll(".chip").map((chip) => chip.text())).toEqual(["4 joueurs"]);
+    expect(wrapper.findAll(".tag").map((chip) => chip.text())).toEqual(["4 joueurs"]);
     expect(wrapper.findAll(".box")).toHaveLength(0);
   });
 

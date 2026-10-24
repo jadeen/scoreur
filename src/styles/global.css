@@ -278,6 +278,16 @@ a:hover {
   cursor: pointer;
 }
 
+/* Pastille informative compacte (traits d'un jeu), pas un bouton */
+.tag {
+  display: inline-block;
+  border: 1px solid var(--nav-inactive);
+  border-radius: var(--radius-chip);
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 .chip.on {
   background: var(--gold);
   color: var(--paper-text);

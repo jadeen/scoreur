@@ -61,7 +61,7 @@ watch(
         <div class="ph jeu-ban" :style="{ background: gameColors[game.slug] }" />
         <h1 class="h1">{{ game.name }}</h1>
         <div class="chips">
-          <span v-for="trait in traitChips" :key="trait" class="chip">{{ trait }}</span>
+          <span v-for="trait in traitChips" :key="trait" class="tag">{{ trait }}</span>
         </div>
         <p v-if="game.description" class="muted">{{ game.description }}</p>
         <div v-if="scoringRules[game.sheet]" class="box">
