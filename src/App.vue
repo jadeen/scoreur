@@ -1,9 +1,9 @@
 <script setup>
 const navLinks = [
-  { label: 'Accueil', active: true },
-  { label: 'Jeux', active: false },
-  { label: 'Mes joueurs', active: false },
-  { label: 'Proposer un jeu', active: false },
+  { label: "Accueil", active: true },
+  { label: "Jeux", active: false },
+  { label: "Mes joueurs", active: false },
+  { label: "Proposer un jeu", active: false },
 ];
 </script>
 
@@ -28,7 +28,9 @@ const navLinks = [
     </nav>
     <main class="main">
       <h1 class="h1">Le carnet de scores de vos soirées jeux</h1>
-      <p class="muted">Notez chaque partie, voyez qui gagne le plus, et revoyez toutes les feuilles de score.</p>
+      <p class="muted">
+        Notez chaque partie, voyez qui gagne le plus, et revoyez toutes les feuilles de score.
+      </p>
       <div class="note">Catalogue, connexion et parties arrivent dans les prochaines étapes.</div>
     </main>
   </div>
