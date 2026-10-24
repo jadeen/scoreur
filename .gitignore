@@ -9,6 +9,8 @@
 # Dépendances et build
 node_modules/
 dist/
+.vite/
+coverage/
 
 # Système
 .DS_Store

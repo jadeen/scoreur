@@ -35,6 +35,6 @@
   --radius-tile: 10px;
   --radius-chip: 999px;
 
-  --font-display: 'Archivo Black', sans-serif;
-  --font-body: 'Work Sans', system-ui, sans-serif;
+  --font-display: "Archivo Black", sans-serif;
+  --font-body: "Work Sans", system-ui, sans-serif;
 }
