@@ -90,6 +90,39 @@ a:hover {
   border-bottom: 1px solid var(--panel-separator);
 }
 
+.topbar--back {
+  justify-content: flex-start;
+}
+
+.topbar--back .back-link {
+  flex: 1 1 0;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.topbar--back .logo {
+  flex: 1 1 0;
+  text-align: center;
+  font-size: 18px;
+}
+
+.topbar--back .topbar__spacer {
+  flex: 1 1 0;
+}
+
+/* Lien retour affiché au-dessus du contenu, desktop seulement (mobile l'a déjà dans la barre) */
+.back-link--page {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .back-link--page {
+    display: inline-block;
+    font-size: 14px;
+    text-decoration: none;
+  }
+}
+
 /* Navigation desktop : liens horizontaux, visible à partir de 1024px */
 .desktop-nav {
   display: none;
@@ -164,4 +197,297 @@ a:hover {
   padding: 12px 14px;
   font-size: 13px;
   color: var(--nav-inactive);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.note strong {
+  color: var(--text);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field input {
+  font: inherit;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: var(--radius-panel);
+  padding: 10px 14px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.ph {
+  background: var(--panel);
+  border-radius: var(--radius-tile);
+}
+
+.box {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-panel);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.item {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-panel);
+  color: var(--text);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.item .t {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  border: 1px solid var(--nav-inactive);
+  border-radius: var(--radius-chip);
+  padding: 6px 12px;
+  min-height: 36px;
+  font: inherit;
+  font-size: 13px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+/* Pastille informative compacte (traits d'un jeu), pas un bouton */
+.tag {
+  display: inline-block;
+  border: 1px solid var(--nav-inactive);
+  border-radius: var(--radius-chip);
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.chip.on {
+  background: var(--gold);
+  color: var(--paper-text);
+  border-color: var(--gold);
+}
+
+.jeu-ban {
+  height: 140px;
+  border-radius: var(--radius-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.jeu-ban::after {
+  content: "";
+  position: absolute;
+  right: 24px;
+  bottom: -20px;
+  width: 90px;
+  height: 120px;
+  border-radius: 10px;
+  background: var(--paper);
+  transform: rotate(10deg);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 1024px) {
+  .jeu-ban {
+    height: 220px;
+  }
+
+  .jeu-ban::after {
+    right: 48px;
+    bottom: -30px;
+    width: 120px;
+    height: 160px;
+  }
+}
+
+/* Catalogue : liste mobile, colonne de filtres + grille desktop */
+.catalogue-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.filters-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.chip-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkbox-filters {
+  display: none;
+}
+
+.filters-note {
+  display: none;
+}
+
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-thumb {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@media (min-width: 1024px) {
+  .catalogue-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .filters-col {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  .list-col {
+    flex: 999 1 640px;
+    min-width: 0;
+  }
+
+  .chip-filters {
+    display: none;
+  }
+
+  .checkbox-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+
+  .filters-note {
+    display: flex;
+  }
+
+  .list-note {
+    display: none;
+  }
+
+  .game-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .item-thumb {
+    width: 100%;
+    height: 110px;
+    background: var(--paper-separator);
+  }
+
+  .item-chevron {
+    display: none;
+  }
+
+  /* Carte papier (plutôt que ligne sur panneau sombre) */
+  .game-list .item {
+    background: var(--paper);
+    color: var(--paper-text);
+    border: 0;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  .game-list .tag {
+    border-color: var(--paper-separator);
+    color: var(--paper-text-secondary);
+  }
+
+  .game-list .item:nth-child(odd) {
+    transform: rotate(-1deg);
+  }
+
+  .game-list .item:nth-child(even) {
+    transform: rotate(1deg);
+  }
+}
+
+/* Page de jeu : une colonne mobile, deux colonnes desktop */
+.jeu-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.jeu-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .jeu-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .jeu-main {
+    flex: 999 1 560px;
+    min-width: 0;
+  }
+
+  .jeu-side {
+    flex: 1 1 360px;
+    min-width: 0;
+  }
 }
