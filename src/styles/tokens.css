@@ -1,0 +1,40 @@
+:root {
+  --felt: #17473a;
+  --felt-glow: radial-gradient(circle at 50% 0%, #1f5a4a 0%, #17473a 60%);
+  --text: #f4f1e8;
+  --text-secondary: #a9c9bc;
+  --nav-inactive: #c7ddd4;
+  --disabled: #6f9486;
+
+  --gold: #f3c969;
+  --gold-shadow: #b88f2e;
+  --gold-hover: #ffe2a0;
+
+  --paper: #fbf8f0;
+  --paper-text: #1a2e27;
+  --paper-text-secondary: #5e6e67;
+  --paper-separator: #e4ded0;
+
+  --panel: rgba(0, 0, 0, 0.18);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --panel-separator: rgba(255, 255, 255, 0.12);
+
+  --status-ok-bg: #e9f2ec;
+  --status-ok-text: #1f6a48;
+  --danger: #ff9c86;
+
+  --token-blue: #2c7fa3;
+  --token-red: #b8432a;
+
+  --game-wizard: #2f4b8f;
+  --game-odin: #2c7fa3;
+  --game-bingo: #c8572f;
+
+  --radius-panel: 12px;
+  --radius-card: 16px;
+  --radius-tile: 10px;
+  --radius-chip: 999px;
+
+  --font-display: 'Archivo Black', sans-serif;
+  --font-body: 'Work Sans', system-ui, sans-serif;
+}
