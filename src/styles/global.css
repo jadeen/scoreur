@@ -165,3 +165,78 @@ a:hover {
   font-size: 13px;
   color: var(--nav-inactive);
 }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field input {
+  font: inherit;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: var(--radius-panel);
+  padding: 10px 14px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.ph {
+  background: var(--panel);
+  border-radius: var(--radius-tile);
+}
+
+.item {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-panel);
+  color: var(--text);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.item .t {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  border: 1px solid var(--nav-inactive);
+  border-radius: var(--radius-chip);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.back-link {
+  font-size: 14px;
+  align-self: flex-start;
+}
+
+.jeu-ban {
+  height: 140px;
+  margin: -24px -20px 0;
+}
+
+@media (min-width: 1024px) {
+  .jeu-ban {
+    margin: 0;
+    border-radius: var(--radius-card);
+  }
+}
