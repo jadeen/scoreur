@@ -1,8 +1,19 @@
-<script setup></script>
+<script setup>
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+</script>
 
 <template>
   <div class="app">
-    <div class="topbar">
+    <div v-if="route.meta.back" class="topbar topbar--back">
+      <router-link class="back-link" :to="route.meta.back.to"
+        >‹ {{ route.meta.back.label }}</router-link
+      >
+      <router-link class="logo" to="/">Scoreur</router-link>
+      <span class="topbar__spacer" aria-hidden="true"></span>
+    </div>
+    <div v-else class="topbar">
       <router-link class="logo" to="/">Scoreur</router-link>
       <a class="btn sm" href="#">Se connecter</a>
     </div>

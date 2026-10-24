@@ -90,6 +90,26 @@ a:hover {
   border-bottom: 1px solid var(--panel-separator);
 }
 
+.topbar--back {
+  justify-content: flex-start;
+}
+
+.topbar--back .back-link {
+  flex: 1 1 0;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.topbar--back .logo {
+  flex: 1 1 0;
+  text-align: center;
+  font-size: 18px;
+}
+
+.topbar--back .topbar__spacer {
+  flex: 1 1 0;
+}
+
 /* Navigation desktop : liens horizontaux, visible à partir de 1024px */
 .desktop-nav {
   display: none;
@@ -220,13 +240,18 @@ a:hover {
   border: 1px solid var(--nav-inactive);
   border-radius: var(--radius-chip);
   padding: 6px 12px;
+  min-height: 36px;
+  font: inherit;
   font-size: 13px;
+  background: transparent;
   color: var(--text-secondary);
+  cursor: pointer;
 }
 
-.back-link {
-  font-size: 14px;
-  align-self: flex-start;
+.chip.on {
+  background: var(--gold);
+  color: var(--paper-text);
+  border-color: var(--gold);
 }
 
 .jeu-ban {

@@ -50,4 +50,25 @@ describe("App", () => {
 
     expect(wrapper.find("h1.h1").text()).toBe("Le carnet de scores de vos soirées jeux");
   });
+
+  it("affiche une barre de retour vers l'accueil sur /jeux", async () => {
+    await router.push("/jeux");
+    await router.isReady();
+    const wrapper = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+
+    const topbar = wrapper.find(".topbar--back");
+    expect(topbar.find(".back-link").text()).toBe("‹ Accueil");
+    expect(topbar.find(".logo").text()).toBe("Scoreur");
+    expect(wrapper.findAll(".topbar")).toHaveLength(1);
+  });
+
+  it("affiche une barre de retour vers le catalogue sur /jeu/:slug", async () => {
+    await router.push("/jeu/wizard");
+    await router.isReady();
+    const wrapper = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+
+    expect(wrapper.find(".topbar--back .back-link").text()).toBe("‹ Jeux");
+  });
 });

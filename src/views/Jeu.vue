@@ -42,8 +42,6 @@ onMounted(async () => {
 
 <template>
   <div>
-    <router-link to="/jeux" class="back-link">‹ Jeux</router-link>
-
     <p v-if="loading" class="muted">Chargement…</p>
     <p v-else-if="error" class="muted">Impossible de charger ce jeu pour le moment.</p>
     <p v-else-if="notFound" class="muted">Ce jeu n'existe pas.</p>
