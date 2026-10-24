@@ -127,7 +127,7 @@ onMounted(async () => {
             <div class="ph item-thumb" :style="{ background: gameColors[game.slug] }" />
             <div class="t">
               <strong>{{ game.name }}</strong>
-              <span class="muted">{{ playersLabel(game) }}</span>
+              <span class="item-meta">{{ playersLabel(game) }}</span>
             </div>
             <span class="item-chevron" aria-hidden="true">›</span>
           </router-link>
