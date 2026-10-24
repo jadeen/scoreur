@@ -63,7 +63,7 @@ describe("Catalogue", () => {
     expect(wrapper.find(".muted").text()).toBe("Chargement du catalogue…");
   });
 
-  it("affiche la liste des jeux avec joueurs et trait distinctif", async () => {
+  it("affiche la liste des jeux avec un badge joueurs et un badge de trait distinctif", async () => {
     mockGamesResponse({ data: games });
     const wrapper = mount(Catalogue);
     await flushPromises();
@@ -71,11 +71,17 @@ describe("Catalogue", () => {
     const items = wrapper.findAll(".item");
     expect(items).toHaveLength(4);
     expect(items[0].find(".t strong").text()).toBe("Bingo");
-    expect(items[0].find(".t span").text()).toBe("solo · quine, double quine, carton plein");
+    expect(items[0].findAll(".item-tags .tag").map((tag) => tag.text())).toEqual([
+      "solo",
+      "quine, double quine, carton plein",
+    ]);
     expect(items[2].find(".t strong").text()).toBe("Odin");
-    expect(items[2].find(".t span").text()).toBe("2 à 6 joueurs · le plus bas gagne");
-    // Jeu Test (sheet générique) : aucun trait connu, pas de « · » ajouté.
-    expect(items[1].find(".t span").text()).toBe("4 joueurs");
+    expect(items[2].findAll(".item-tags .tag").map((tag) => tag.text())).toEqual([
+      "2 à 6 joueurs",
+      "le plus bas gagne",
+    ]);
+    // Jeu Test (sheet générique) : aucun trait connu, un seul badge.
+    expect(items[1].findAll(".item-tags .tag").map((tag) => tag.text())).toEqual(["4 joueurs"]);
   });
 
   it("filtre les jeux par nom", async () => {

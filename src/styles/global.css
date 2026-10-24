@@ -368,9 +368,10 @@ a:hover {
   flex-shrink: 0;
 }
 
-.item-meta {
-  color: var(--text-secondary);
-  font-size: 13px;
+.item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 @media (min-width: 1024px) {
@@ -446,13 +447,8 @@ a:hover {
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
   }
 
-  .game-list .item-meta {
-    display: inline-block;
-    align-self: flex-start;
-    border: 1px solid var(--paper-separator);
-    border-radius: var(--radius-chip);
-    padding: 2px 8px;
-    font-size: 12px;
+  .game-list .tag {
+    border-color: var(--paper-separator);
     color: var(--paper-text-secondary);
   }
 

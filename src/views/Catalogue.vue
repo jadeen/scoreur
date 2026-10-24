@@ -16,11 +16,6 @@ const gameColors = {
   bingo: "var(--game-bingo)",
 };
 
-function itemSubtitle(game) {
-  const trait = gameTraits[game.sheet];
-  return trait ? `${playersLabel(game)} · ${trait}` : playersLabel(game);
-}
-
 function toggleCategory(key) {
   const i = activeCategories.value.indexOf(key);
   if (i === -1) {
@@ -117,7 +112,10 @@ onMounted(async () => {
           <div class="ph item-thumb" :style="{ background: gameColors[game.slug] }" />
           <div class="t">
             <strong>{{ game.name }}</strong>
-            <span class="item-meta">{{ itemSubtitle(game) }}</span>
+            <div class="item-tags">
+              <span class="tag">{{ playersLabel(game) }}</span>
+              <span v-if="gameTraits[game.sheet]" class="tag">{{ gameTraits[game.sheet] }}</span>
+            </div>
           </div>
           <span class="item-chevron" aria-hidden="true">›</span>
         </router-link>
