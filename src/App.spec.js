@@ -1,10 +1,20 @@
 import { mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App.vue";
+import { signInWithGoogle, signOut, user } from "./lib/auth";
 import { router } from "./router";
+
+vi.mock("./lib/auth", async (importOriginal) => {
+  const { ref } = await import("vue");
+  const actual = await importOriginal();
+  return { ...actual, user: ref(null), signInWithGoogle: vi.fn(), signOut: vi.fn() };
+});
 
 describe("App", () => {
   beforeEach(async () => {
+    user.value = null;
+    signInWithGoogle.mockClear();
+    signOut.mockClear();
     await router.push("/");
     await router.isReady();
   });
@@ -70,5 +80,32 @@ describe("App", () => {
     await router.isReady();
 
     expect(wrapper.find(".topbar--back .back-link").text()).toBe("‹ Jeux");
+  });
+
+  it("déclenche la connexion Google au clic sur Se connecter, mobile et desktop", async () => {
+    const wrapper = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+
+    await wrapper.find(".topbar .btn").trigger("click");
+    await wrapper.find(".desktop-nav .btn").trigger("click");
+    expect(signInWithGoogle).toHaveBeenCalledTimes(2);
+  });
+
+  it("affiche le nom et l'avatar une fois connecté, mobile et desktop", async () => {
+    user.value = { email: "lea@example.fr", user_metadata: { full_name: "Léa Martin" } };
+    const wrapper = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+
+    const topbarWho = wrapper.find(".topbar .who");
+    expect(topbarWho.find(".avatar").text()).toBe("L");
+    expect(topbarWho.find(".who__name").text()).toBe("Léa Martin");
+
+    const navWho = wrapper.find(".desktop-nav .who");
+    expect(navWho.find(".avatar").text()).toBe("L");
+    expect(navWho.find(".who__name").text()).toBe("Léa Martin");
+
+    await topbarWho.find(".link-btn").trigger("click");
+    await navWho.find(".link-btn").trigger("click");
+    expect(signOut).toHaveBeenCalledTimes(2);
   });
 });
