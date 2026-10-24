@@ -527,6 +527,67 @@ a:hover {
   }
 }
 
+/* Mes joueurs : liste du carnet, ajout et renommage en ligne */
+.add,
+.rename {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.add input,
+.rename input {
+  flex-grow: 1;
+  min-width: 140px;
+  font: inherit;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: var(--radius-panel);
+  padding: 10px 14px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.player-item {
+  flex-wrap: wrap;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.badge {
+  display: inline-block;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: var(--radius-chip);
+  padding: 0 6px;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+.lk {
+  font: inherit;
+  font-size: 13px;
+  background: none;
+  border: 0;
+  color: var(--text);
+  text-decoration: underline;
+  padding: 8px 4px;
+  min-height: 44px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 /* Page de jeu : une colonne mobile, deux colonnes desktop */
 .jeu-layout {
   display: flex;

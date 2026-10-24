@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App.vue";
 import { signInWithGoogle, signOut, user } from "./lib/auth";
@@ -41,6 +41,18 @@ describe("App", () => {
     ]);
     expect(links[0].classes()).toContain("on");
     expect(links[1].classes()).not.toContain("on");
+  });
+
+  it("ouvre la page Mes joueurs via le lien de nav desktop", async () => {
+    const wrapper = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+
+    const link = wrapper
+      .findAll(".desktop-nav__inner a.link")
+      .find((a) => a.text() === "Mes joueurs");
+    await link.trigger("click");
+    await flushPromises();
+    expect(wrapper.find("h1.h1").text()).toBe("Mes joueurs");
   });
 
   it("active le lien Jeux une fois sur /jeux", async () => {
