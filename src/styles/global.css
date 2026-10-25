@@ -110,19 +110,6 @@ a:hover {
   flex: 1 1 0;
 }
 
-/* Lien retour affiché au-dessus du contenu, desktop seulement (mobile l'a déjà dans la barre) */
-.back-link--page {
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .back-link--page {
-    display: inline-block;
-    font-size: 14px;
-    text-decoration: none;
-  }
-}
-
 /* Navigation desktop : liens horizontaux, visible à partir de 1024px */
 .desktop-nav {
   display: none;
@@ -669,6 +656,18 @@ a:hover {
   font-size: 14px;
   text-decoration: none;
   display: inline-block;
+}
+
+/* Lien retour affiché au-dessus du contenu, desktop seulement (mobile l'a déjà dans la barre).
+   Doit rester après .back-link ci-dessus pour que display: none l'emporte sur mobile. */
+.back-link--page {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .back-link--page {
+    display: inline-block;
+  }
 }
 
 .partie-layout {
