@@ -1291,12 +1291,31 @@ a:hover {
   gap: 12px;
 }
 
-.accueil-games .box .tag {
-  align-self: flex-start;
-}
-
 .accueil-game-thumb {
   height: 64px;
+  background: var(--paper-separator);
+}
+
+/* Carte papier, identique en mobile et en desktop */
+.accueil-games .box {
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 0;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.accueil-games .box .tag {
+  align-self: flex-start;
+  border-color: var(--paper-separator);
+  color: var(--paper-text-secondary);
+}
+
+.accueil-games .box:nth-child(odd) {
+  transform: rotate(-1deg);
+}
+
+.accueil-games .box:nth-child(even) {
+  transform: rotate(1deg);
 }
 
 @media (min-width: 1024px) {
@@ -1306,28 +1325,6 @@ a:hover {
 
   .accueil-game-thumb {
     height: 110px;
-    background: var(--paper-separator);
-  }
-
-  /* Carte papier, comme le catalogue en desktop (plutôt que le panneau sombre du mobile) */
-  .accueil-games .box {
-    background: var(--paper);
-    color: var(--paper-text);
-    border: 0;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-  }
-
-  .accueil-games .box .tag {
-    border-color: var(--paper-separator);
-    color: var(--paper-text-secondary);
-  }
-
-  .accueil-games .box:nth-child(odd) {
-    transform: rotate(-1deg);
-  }
-
-  .accueil-games .box:nth-child(even) {
-    transform: rotate(1deg);
   }
 }
 
