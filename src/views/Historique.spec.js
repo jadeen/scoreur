@@ -26,7 +26,7 @@ function makeMatch(overrides = {}) {
   return {
     id: 42,
     played_at: "2026-10-23T12:00:00Z",
-    games: { name: "Wizard", slug: "wizard" },
+    games: { name: "Wizard", color: "#2f4b8f" },
     match_players: [
       { score: 210, is_winner: true, players: { name: "Léa" } },
       { score: 180, is_winner: false, players: { name: "Moi" } },
@@ -84,7 +84,7 @@ describe("Historique", () => {
       data: [
         makeMatch({
           id: 7,
-          games: { name: "Bingo", slug: "bingo" },
+          games: { name: "Bingo", color: "#c8572f" },
           match_players: [{ score: 1, is_winner: true, players: { name: "Moi" } }],
         }),
       ],

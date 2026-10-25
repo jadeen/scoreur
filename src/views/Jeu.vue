@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { user } from "../lib/auth";
-import { gameColors } from "../lib/gameColors";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
@@ -50,7 +49,7 @@ watch(
 
     <div v-else class="jeu-layout">
       <div class="jeu-main">
-        <div class="ph jeu-ban" :style="{ background: gameColors[game.slug] }" />
+        <div class="ph jeu-ban" :style="{ background: game.color }" />
         <h1 class="h1">{{ game.name }}</h1>
         <div class="chips">
           <span v-for="trait in traitChips" :key="trait" class="tag">{{ trait }}</span>

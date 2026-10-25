@@ -1,6 +1,5 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { gameColors } from "../lib/gameColors";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
@@ -99,7 +98,7 @@ onMounted(async () => {
           class="item"
           :to="{ name: 'jeu', params: { slug: game.slug } }"
         >
-          <div class="ph item-thumb" :style="{ background: gameColors[game.slug] }" />
+          <div class="ph item-thumb" :style="{ background: game.color }" />
           <div class="t">
             <strong>{{ game.name }}</strong>
             <div class="item-tags">
