@@ -1,0 +1,50 @@
+/* Carte papier d'entrée de score, comme le panneau d'annonces des feuilles dédiées.
+   Partagée par la feuille générique (partie), Wizard et Odin. */
+.hand {
+  background: var(--paper);
+  color: var(--paper-text);
+  border-radius: var(--radius-card);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hand .muted {
+  color: var(--paper-text-secondary);
+}
+
+.pr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid var(--paper-separator);
+}
+
+.pr:first-of-type {
+  border-top: 0;
+}
+
+.hand-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hand-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Feuille Odin : le nom se met en évidence quand la main est vidée */
+.odin-empty {
+  color: var(--status-ok-text);
+  font-weight: 700;
+}

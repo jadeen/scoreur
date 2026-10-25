@@ -1,0 +1,39 @@
+/* Mon compte : qui, raccourcis, suppression du compte */
+.compte-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.who .t {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.compte-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.compte-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 4px;
+  border-bottom: 1px solid var(--panel-separator);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.compte-danger {
+  border: 1px dashed var(--danger);
+  border-radius: var(--radius-panel);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

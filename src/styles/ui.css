@@ -1,0 +1,227 @@
+.note {
+  border: 1px dashed var(--nav-inactive);
+  border-radius: var(--radius-panel);
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--nav-inactive);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.note strong {
+  color: var(--text);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field input {
+  font: inherit;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: var(--radius-panel);
+  padding: 10px 14px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.field textarea {
+  font: inherit;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: var(--radius-panel);
+  padding: 10px 14px;
+  min-height: 72px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.ph {
+  background: var(--panel);
+  border-radius: var(--radius-tile);
+}
+
+.box {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-panel);
+  color: var(--text);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.item {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-panel);
+  color: var(--text);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.item .t {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.jet {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px dashed var(--paper);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  border: 1px solid var(--nav-inactive);
+  border-radius: var(--radius-chip);
+  padding: 6px 12px;
+  min-height: 36px;
+  font: inherit;
+  font-size: 13px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.chip.on {
+  background: var(--gold);
+  color: var(--paper-text);
+  border-color: var(--gold);
+}
+
+/* Pastille informative compacte (traits d'un jeu), pas un bouton */
+.tag {
+  display: inline-block;
+  border: 1px solid var(--nav-inactive);
+  border-radius: var(--radius-chip);
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.badge {
+  display: inline-block;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: var(--radius-chip);
+  padding: 0 6px;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+.lk {
+  font: inherit;
+  font-size: 13px;
+  background: none;
+  border: 0;
+  color: var(--text);
+  text-decoration: underline;
+  padding: 8px 4px;
+  min-height: 44px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Ligne de case à cocher pour un joueur (sélection de participants) */
+.pl {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  border-radius: var(--radius-panel);
+  padding: 0 12px;
+  min-height: 48px;
+  font-size: 15px;
+}
+
+.pl.off {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-secondary);
+}
+
+.pl input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--gold);
+}
+
+/* Case à cocher générique (options d'un jeu, variante, etc.) */
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--gold);
+}
+
+/* Action de suppression, et sa confirmation en deux temps : Joueurs, Compte, Partie */
+.danger {
+  font: inherit;
+  font-size: 14px;
+  background: none;
+  border: 0;
+  color: var(--danger);
+  text-decoration: underline;
+  padding: 8px 0;
+  align-self: flex-start;
+  cursor: pointer;
+}
+
+.btn.red {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.confirm-delete {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirm-delete-actions {
+  display: flex;
+  gap: 10px;
+}

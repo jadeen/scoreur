@@ -1,0 +1,6 @@
+/* Revoir une partie : classement final en lecture seule, suppression */
+.partie-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

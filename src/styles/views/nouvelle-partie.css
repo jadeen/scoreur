@@ -1,0 +1,79 @@
+/* Nouvelle partie : configuration, feuille générique, fin de partie */
+.partie-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.config-step,
+.feuille-step,
+.fin-step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hint-count {
+  font-size: 13px;
+}
+
+.target-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.target-field input {
+  width: 72px;
+  font: inherit;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: var(--radius-panel);
+  padding: 8px 10px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+/* Feuilles dédiées (Wizard, Odin) en desktop : classement + saisie à gauche, feuille de manches à droite */
+@media (min-width: 1024px) {
+  .feuille-step--dedie {
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) 1fr;
+    align-items: start;
+    gap: 24px;
+  }
+
+  .feuille-step--dedie .classement,
+  .feuille-step--dedie .hand {
+    grid-column: 1;
+  }
+
+  .feuille-step--dedie .ledger-section {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+/* Feuille Bingo en desktop : carton à gauche, tous les numéros à droite */
+@media (min-width: 1024px) {
+  .feuille-step--bingo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 24px;
+  }
+
+  .feuille-step--bingo > .btn {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+
+  .feuille-step--bingo .carton,
+  .feuille-step--bingo .bingo-board {
+    max-width: 480px;
+  }
+}

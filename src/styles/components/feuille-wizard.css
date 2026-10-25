@@ -1,0 +1,98 @@
+/* Feuille Wizard : en-tête de manche, segmented control annonces/plis */
+.seg {
+  display: flex;
+  gap: 2px;
+  background: var(--panel);
+  border-radius: var(--radius-chip);
+  padding: 3px;
+}
+
+.seg span {
+  padding: 4px 12px;
+  border-radius: var(--radius-chip);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper-text-secondary);
+}
+
+.seg span.on {
+  background: var(--felt);
+  color: var(--text);
+}
+
+/* Ligne de saisie d'une manche : nom + étiquettes, puis stepper */
+.round-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.round-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.round-tag {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--paper-text-secondary);
+}
+
+.round-tag.donne {
+  color: var(--gold-shadow);
+}
+
+.round-ctl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bidref {
+  font-size: 13px;
+  color: var(--paper-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.delta {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 3px 8px;
+  border-radius: 7px;
+  min-width: 44px;
+  text-align: center;
+}
+
+.delta.pos {
+  color: var(--status-ok-text);
+  background: var(--status-ok-bg);
+}
+
+.delta.neg {
+  color: var(--token-red);
+  background: var(--status-bad-bg);
+}
+
+.status {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  padding: 9px 12px;
+  border-radius: var(--radius-panel);
+}
+
+.status.ok {
+  background: var(--status-ok-bg);
+  color: var(--status-ok-text);
+  font-weight: 600;
+}
+
+.status.warn {
+  background: var(--status-bad-bg);
+  color: var(--token-red);
+  font-weight: 600;
+}
