@@ -216,6 +216,39 @@ describe("Partie", () => {
     );
   });
 
+  it("affiche le carton Bingo reconstitué depuis le détail archivé", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockMatchTable({
+      select: {
+        data: makeMatchDetail({
+          games: { name: "Bingo", lower_wins: false },
+          details_format: "bingo-v1",
+          details: {
+            carton: [
+              [8, 0, 20, 0, 0, 56, 0, 72, 82],
+              [0, 15, 0, 34, 49, 0, 63, 77, 0],
+              [0, 0, 28, 35, 0, 59, 68, 0, 89],
+            ],
+            tirage: [8, 20, 56, 72, 82],
+            gagne: { quine: true, double_quine: false, carton_plein: false },
+          },
+          match_players: [{ score: 1, players: { id: 1, name: "Moi" } }],
+        }),
+        error: null,
+      },
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+
+    expect(wrapper.find(".h2").text()).toBe("Carton");
+    expect(wrapper.findAll(".carton-cell")).toHaveLength(27);
+    expect(wrapper.findAll(".carton-cell.hit")).toHaveLength(5);
+    expect(wrapper.text()).toContain("5 numéros tirés · Quine");
+    expect(wrapper.text()).toContain(
+      "Feuille redessinée à partir du détail archivé (format bingo-v1), en lecture seule.",
+    );
+  });
+
   it("n'affiche pas de feuille de manches pour une partie générique", async () => {
     user.value = { email: "lea@example.fr" };
     mockMatchTable({ select: { data: makeMatchDetail(), error: null } });

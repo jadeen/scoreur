@@ -884,6 +884,7 @@ a:hover {
   text-align: center;
 }
 
+.hand .muted,
 .win .muted {
   color: var(--paper-text-secondary);
 }
@@ -1258,4 +1259,131 @@ a:hover {
     grid-column: 2;
     grid-row: 1 / span 2;
   }
+}
+
+/* Feuille Bingo en desktop : carton à gauche, tous les numéros à droite */
+@media (min-width: 1024px) {
+  .feuille-step--bingo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 24px;
+  }
+
+  .feuille-step--bingo > .btn {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+
+  .feuille-step--bingo .carton,
+  .feuille-step--bingo .bingo-board {
+    max-width: 480px;
+  }
+}
+
+/* Carton Bingo : saisie à la configuration (inputs), affichage en jeu et en relecture (lecture seule) */
+.carton-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.carton-setup-row {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px;
+}
+
+.carton-setup-row input {
+  width: 100%;
+  min-height: 40px;
+  text-align: center;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: 8px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.carton {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  background: var(--paper-separator);
+  padding: 4px;
+  border-radius: var(--radius-tile);
+  box-sizing: border-box;
+}
+
+.carton-row {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px;
+}
+
+.carton-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--paper-text);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(14px, 4vw, 20px);
+  font-variant-numeric: tabular-nums;
+  border-radius: 4px;
+}
+
+.carton-cell.blank {
+  background: transparent;
+}
+
+.carton-cell.hit {
+  background: var(--gold);
+  color: var(--paper-text);
+}
+
+/* Tous les numéros (1 à 90) : cliquer pour tirer/retirer, cerclés = sur le carton */
+.bingo-board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.bingo-ball {
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 50%;
+  background: var(--paper-separator);
+  color: var(--paper-text-secondary);
+  font: 700 clamp(10px, 2.2vw, 12px) var(--font-body);
+  font-variant-numeric: tabular-nums;
+  padding: 0;
+  cursor: pointer;
+}
+
+.bingo-ball.mine {
+  box-shadow: inset 0 0 0 2px var(--gold-shadow);
+  color: var(--paper-text);
+}
+
+.bingo-ball.on {
+  background: var(--gold);
+  color: var(--paper-text);
+  box-shadow: none;
+}
+
+.bingo-complete {
+  color: var(--status-ok-text);
+  font-weight: 600;
 }

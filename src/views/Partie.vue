@@ -1,7 +1,9 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import CartonBingo from "../components/CartonBingo.vue";
 import TableauManches from "../components/TableauManches.vue";
+import { BINGO_TIER_KEYS, BINGO_TIER_LABELS } from "../lib/bingoScoring";
 import { user } from "../lib/auth";
 import { formatDateLong } from "../lib/formatDate";
 import { odinLedgerRows } from "../lib/odinScoring";
@@ -99,6 +101,14 @@ const scoreLedger = computed(() => {
   return { players: ledgerPlayers, rows, format };
 });
 
+const bingoDetail = computed(() => {
+  if (match.value.details_format !== "bingo-v1") return null;
+  const wonTiers = BINGO_TIER_KEYS.filter((key) => match.value.details.gagne[key]).map(
+    (key) => BINGO_TIER_LABELS[key],
+  );
+  return { card: match.value.details.carton, tirage: match.value.details.tirage, wonTiers };
+});
+
 async function deleteMatch() {
   deleting.value = true;
   deleteError.value = null;
@@ -148,6 +158,17 @@ async function deleteMatch() {
         <p class="muted">
           Feuille redessinée à partir du détail archivé (format {{ scoreLedger.format }}), en
           lecture seule.
+        </p>
+      </div>
+
+      <div v-if="bingoDetail" class="box">
+        <h2 class="h2">Carton</h2>
+        <CartonBingo :card="bingoDetail.card" :tirage="bingoDetail.tirage" />
+        <p class="muted">
+          {{ bingoDetail.tirage.length }} numéros tirés · {{ bingoDetail.wonTiers.join(", ") }}
+        </p>
+        <p class="muted">
+          Feuille redessinée à partir du détail archivé (format bingo-v1), en lecture seule.
         </p>
       </div>
 
