@@ -3,10 +3,12 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import BandeauFin from "../components/BandeauFin.vue";
 import Classement from "../components/Classement.vue";
+import FeuilleOdin from "../components/FeuilleOdin.vue";
 import FeuilleWizard from "../components/FeuilleWizard.vue";
 import Stepper from "../components/Stepper.vue";
 import { user } from "../lib/auth";
 import { clearDraft, loadDraft, saveDraft } from "../lib/draft";
+import { ODIN_DEFAULT_TARGET, ODIN_MAX_TARGET, ODIN_MIN_TARGET } from "../lib/odinScoring";
 import { playersLabel } from "../lib/playersLabel";
 import { rankPlayers } from "../lib/ranking";
 import { supabase } from "../lib/supabase";
@@ -30,9 +32,11 @@ const step = ref("config");
 const selected = ref([]);
 const scores = reactive({});
 const variant = ref(false);
+const target = ref(ODIN_DEFAULT_TARGET);
 const details = ref(null);
 
 const isWizard = computed(() => game.value?.sheet === "wizard-v1");
+const isOdin = computed(() => game.value?.sheet === "odin-v1");
 
 const newName = ref("");
 const addError = ref(null);
@@ -69,6 +73,7 @@ function restoreDraft() {
   if (draft.details) {
     details.value = draft.details;
     variant.value = Boolean(draft.details.variante_pas_egal);
+    if (draft.details.seuil) target.value = draft.details.seuil;
   }
   step.value = "feuille";
   return true;
@@ -148,12 +153,19 @@ function persistDraft() {
 watch(scores, persistDraft, { deep: true });
 watch(details, persistDraft, { deep: true });
 
-function onWizardScores(wizardScores) {
-  Object.assign(scores, wizardScores);
+function setTarget(value) {
+  target.value = Math.min(
+    ODIN_MAX_TARGET,
+    Math.max(ODIN_MIN_TARGET, Number(value) || ODIN_DEFAULT_TARGET),
+  );
 }
 
-function onWizardDetails(wizardDetails) {
-  details.value = wizardDetails;
+function onSheetScores(sheetScores) {
+  Object.assign(scores, sheetScores);
+}
+
+function onSheetDetails(sheetDetails) {
+  details.value = sheetDetails;
 }
 
 function startGame() {
@@ -264,6 +276,24 @@ function onAbandon() {
           </p>
         </div>
 
+        <div v-if="isOdin" class="box">
+          <h2 class="h2">Options du jeu</h2>
+          <label class="target-field">
+            <span>Fin de partie à</span>
+            <input
+              :value="target"
+              type="number"
+              :min="ODIN_MIN_TARGET"
+              :max="ODIN_MAX_TARGET"
+              @change="setTarget($event.target.value)"
+            />
+          </label>
+          <p class="muted">
+            Chaque carte restant en main vaut 1 point. La partie s'arrête quand quelqu'un atteint ce
+            score ; le plus petit total gagne.
+          </p>
+        </div>
+
         <p v-if="!canStart" class="muted hint-count">
           {{ playersLabel(game) }} nécessaires pour commencer.
         </p>
@@ -275,7 +305,7 @@ function onAbandon() {
       <div
         v-else-if="step === 'feuille'"
         class="feuille-step"
-        :class="{ 'feuille-step--wizard': isWizard }"
+        :class="{ 'feuille-step--dedie': isWizard || isOdin }"
       >
         <Classement :players="feuillePlayers" :lower-wins="game.lower_wins" />
 
@@ -284,8 +314,20 @@ function onAbandon() {
             :players="feuillePlayers"
             :variant="variant"
             :initial-details="details"
-            @update:scores="onWizardScores"
-            @update:details="onWizardDetails"
+            @update:scores="onSheetScores"
+            @update:details="onSheetDetails"
+            @fin="step = 'fin'"
+          />
+          <button class="btn" type="button" @click="onAbandon">Abandonner la partie</button>
+        </template>
+
+        <template v-else-if="isOdin">
+          <FeuilleOdin
+            :players="feuillePlayers"
+            :target="target"
+            :initial-details="details"
+            @update:scores="onSheetScores"
+            @update:details="onSheetDetails"
             @fin="step = 'fin'"
           />
           <button class="btn" type="button" @click="onAbandon">Abandonner la partie</button>

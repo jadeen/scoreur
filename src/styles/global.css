@@ -1033,6 +1033,33 @@ a:hover {
   accent-color: var(--gold);
 }
 
+.target-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.target-field input {
+  width: 72px;
+  font: inherit;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: var(--radius-panel);
+  padding: 8px 10px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+/* Feuille Odin : le nom se met en évidence quand la main est vidée */
+.odin-empty {
+  color: var(--status-ok-text);
+  font-weight: 700;
+}
+
 /* Feuille Wizard : en-tête de manche, segmented control annonces/plis */
 .hand-head {
   display: flex;
@@ -1213,21 +1240,21 @@ a:hover {
   font-size: 14px;
 }
 
-/* Feuille Wizard en desktop : classement + saisie à gauche, feuille de manches à droite */
+/* Feuilles dédiées (Wizard, Odin) en desktop : classement + saisie à gauche, feuille de manches à droite */
 @media (min-width: 1024px) {
-  .feuille-step--wizard {
+  .feuille-step--dedie {
     display: grid;
     grid-template-columns: minmax(320px, 420px) 1fr;
     align-items: start;
     gap: 24px;
   }
 
-  .feuille-step--wizard .classement,
-  .feuille-step--wizard .hand {
+  .feuille-step--dedie .classement,
+  .feuille-step--dedie .hand {
     grid-column: 1;
   }
 
-  .feuille-step--wizard .ledger-section {
+  .feuille-step--dedie .ledger-section {
     grid-column: 2;
     grid-row: 1 / span 2;
   }
