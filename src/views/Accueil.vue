@@ -116,7 +116,7 @@ watch(
         <p v-if="recentMatches.length === 0" class="muted state-empty">
           Aucune partie enregistrée pour l'instant.
         </p>
-        <div v-else class="match-list">
+        <div v-else class="accueil-matches">
           <router-link
             v-for="match in recentMatches"
             :key="match.id"

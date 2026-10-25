@@ -1409,6 +1409,15 @@ a:hover {
   }
 }
 
+/* Panneau sombre à toutes les tailles, contrairement au match-list de l'Historique
+   (qui passe en carte papier desktop) : le wireframe desktop de l'accueil garde
+   les dernières parties dans le panneau sombre de la colonne latérale. */
+.accueil-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .accueil-quicklinks {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

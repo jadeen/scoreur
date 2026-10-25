@@ -149,7 +149,7 @@ describe("Accueil, connecté", () => {
     expect(tiles[0].attributes("href")).toBe("#/jeu/wizard/partie");
     expect(tiles[0].find(".muted").text()).toBe("24 oct.");
 
-    const items = wrapper.findAll(".match-list .item");
+    const items = wrapper.findAll(".accueil-matches .item");
     expect(items).toHaveLength(3);
     expect(items[0].find(".row strong").text()).toBe("Wizard");
     expect(items[0].attributes("href")).toBe("#/partie/1");
@@ -192,7 +192,7 @@ describe("Accueil, connecté", () => {
     const tiles = wrapper.findAll(".accueil-recent-games .tile");
     expect(tiles.map((tile) => tile.find("strong").text())).toEqual(["Wizard", "Odin", "Bingo"]);
 
-    const items = wrapper.findAll(".match-list .item");
+    const items = wrapper.findAll(".accueil-matches .item");
     expect(items.map((item) => item.attributes("href"))).toEqual([
       "#/partie/1",
       "#/partie/2",
