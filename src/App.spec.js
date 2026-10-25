@@ -37,6 +37,7 @@ describe("App", () => {
       "Accueil",
       "Jeux",
       "Mes joueurs",
+      "Historique",
       "Proposer un jeu",
     ]);
     expect(links[0].classes()).toContain("on");

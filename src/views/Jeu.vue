@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { user } from "../lib/auth";
+import { gameColors } from "../lib/gameColors";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
@@ -12,12 +13,6 @@ const game = ref(null);
 const loading = ref(true);
 const notFound = ref(false);
 const error = ref(null);
-
-const gameColors = {
-  wizard: "var(--game-wizard)",
-  odin: "var(--game-odin)",
-  bingo: "var(--game-bingo)",
-};
 
 const traitChips = computed(() => [playersLabel(game.value), ...displayTags(game.value)]);
 
