@@ -40,5 +40,5 @@ Le dossier `.memories/` contient le contexte de conception du projet. Il est **i
 ## Façon de travailler
 - On discute et on finalise le design **avant** de modifier le code ou de créer des tickets.
 - **Issues et PR courtes** : moins d'une minute de lecture.
-- Toute PR qui touche l'UI doit inclure des **captures d'écran**.
+- Pas de captures d'écran dans les PR : toute PR qui touche l'UI est testée localement (`npm run dev`) avant d'être ouverte.
 - Montrer le contenu d'une issue ou d'une PR avant de la publier, car le dépôt est public.
