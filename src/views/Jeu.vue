@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref, watch } from "vue";
+import { user } from "../lib/auth";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
@@ -60,12 +61,15 @@ watch(
           <span v-for="trait in traitChips" :key="trait" class="tag">{{ trait }}</span>
         </div>
         <p v-if="game.description" class="muted">{{ game.description }}</p>
+        <router-link v-if="user" class="btn primary" :to="`/jeu/${game.slug}/partie`">
+          Nouvelle partie de {{ game.name }}
+        </router-link>
         <div v-if="game.scoring_summary" class="box">
           <span class="label">Comment on compte</span>
           <p class="muted">{{ game.scoring_summary }}</p>
         </div>
       </div>
-      <div class="jeu-side">
+      <div v-if="!user" class="jeu-side">
         <div class="note">
           Connecte-toi pour enregistrer une partie de {{ game.name }} et suivre tes statistiques.
         </div>
