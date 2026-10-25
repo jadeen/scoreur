@@ -51,6 +51,11 @@
   margin-left: auto;
 }
 
+.player-item .confirm-delete {
+  flex-basis: 100%;
+  width: 100%;
+}
+
 @media (min-width: 1024px) {
   .player-list {
     display: grid;
@@ -70,6 +75,7 @@
   .player-item .actions {
     margin-left: 0;
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .player-item .lk {

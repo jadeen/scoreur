@@ -13,15 +13,23 @@ vi.mock("../lib/supabase", () => ({
   supabase: { from: vi.fn() },
 }));
 
-function mockPlayersTable({ select, insert, update } = {}) {
-  supabase.from.mockReturnValue({
-    select: () => ({
-      order: () => Promise.resolve(select ?? { data: [], error: null }),
-    }),
-    insert: (values) => Promise.resolve(insert ? insert(values) : { error: null }),
-    update: (values) => ({
-      eq: (_column, id) => Promise.resolve(update ? update(values, id) : { error: null }),
-    }),
+function mockPlayersTable({ select, insert, update, del, stats } = {}) {
+  supabase.from.mockImplementation((table) => {
+    if (table === "player_stats") {
+      return { select: () => Promise.resolve(stats ?? { data: [], error: null }) };
+    }
+    return {
+      select: () => ({
+        order: () => Promise.resolve(select ?? { data: [], error: null }),
+      }),
+      insert: (values) => Promise.resolve(insert ? insert(values) : { error: null }),
+      update: (values) => ({
+        eq: (_column, id) => Promise.resolve(update ? update(values, id) : { error: null }),
+      }),
+      delete: () => ({
+        eq: (_column, id) => Promise.resolve(del ? del(id) : { error: null }),
+      }),
+    };
   });
 }
 
@@ -331,5 +339,108 @@ describe("Joueurs", () => {
     await flushPromises();
 
     expect(wrapper.find(".error-moi").text()).toBe("Impossible d'enregistrer pour le moment.");
+  });
+
+  it("affiche le nombre de parties et de victoires par joueur", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockPlayersTable({
+      select: { data: makePlayers(), error: null },
+      stats: {
+        data: [
+          { player_id: 1, parties: 15, victoires: 4 },
+          { player_id: 2, parties: 1, victoires: 1 },
+        ],
+        error: null,
+      },
+    });
+    wrapper = mount(Joueurs);
+    await flushPromises();
+
+    const items = wrapper.findAll(".item");
+    expect(items[0].find(".muted").text()).toBe("0 partie · 0 victoire");
+    expect(items[1].find(".muted").text()).toBe("15 parties · 4 victoires");
+    expect(items[2].find(".muted").text()).toBe("1 partie · 1 victoire");
+  });
+
+  it("affiche un bouton Supprimer pour les joueurs autres que « moi »", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockPlayersTable({ select: { data: makePlayers(), error: null } });
+    wrapper = mount(Joueurs);
+    await flushPromises();
+
+    const hugoItem = wrapper.findAll(".item")[1];
+    expect(hugoItem.findAll(".lk").map((btn) => btn.text())).toEqual([
+      "Renommer",
+      "Marquer comme moi",
+      "Supprimer",
+    ]);
+  });
+
+  it("demande confirmation avant de supprimer un joueur", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockPlayersTable({ select: { data: makePlayers(), error: null } });
+    wrapper = mount(Joueurs);
+    await flushPromises();
+
+    const hugoItem = wrapper.findAll(".item")[1];
+    await hugoItem.findAll(".lk")[2].trigger("click");
+
+    expect(hugoItem.find(".confirm-delete").text()).toContain(
+      "Supprimer Hugo et retirer ses scores des parties passées ?",
+    );
+    expect(hugoItem.find(".actions").exists()).toBe(false);
+  });
+
+  it("annule la suppression d'un joueur sans appeler Supabase", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockPlayersTable({ select: { data: makePlayers(), error: null } });
+    wrapper = mount(Joueurs);
+    await flushPromises();
+    supabase.from.mockClear();
+
+    const hugoItem = wrapper.findAll(".item")[1];
+    await hugoItem.findAll(".lk")[2].trigger("click");
+    await hugoItem.findAll(".confirm-delete-actions button")[0].trigger("click");
+
+    expect(hugoItem.find(".actions").exists()).toBe(true);
+    expect(supabase.from).not.toHaveBeenCalled();
+  });
+
+  it("supprime un joueur et retire sa ligne du carnet", async () => {
+    user.value = { email: "lea@example.fr" };
+    const del = vi.fn(() => ({ error: null }));
+    mockPlayersTable({ select: { data: makePlayers(), error: null }, del });
+    wrapper = mount(Joueurs);
+    await flushPromises();
+
+    const hugoItem = wrapper.findAll(".item")[1];
+    await hugoItem.findAll(".lk")[2].trigger("click");
+    await hugoItem.findAll(".confirm-delete-actions button")[1].trigger("click");
+    await flushPromises();
+
+    expect(del).toHaveBeenCalledWith(1);
+    const names = wrapper.findAll(".item").map((item) => item.find("strong").text());
+    expect(names).toHaveLength(2);
+    expect(names).not.toContain("Hugo");
+  });
+
+  it("affiche un message d'erreur si la suppression échoue", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockPlayersTable({
+      select: { data: makePlayers(), error: null },
+      del: () => ({ error: { code: "500" } }),
+    });
+    wrapper = mount(Joueurs);
+    await flushPromises();
+
+    const hugoItem = wrapper.findAll(".item")[1];
+    await hugoItem.findAll(".lk")[2].trigger("click");
+    await hugoItem.findAll(".confirm-delete-actions button")[1].trigger("click");
+    await flushPromises();
+
+    expect(wrapper.find(".error-delete").text()).toBe(
+      "Impossible de supprimer ce joueur pour le moment.",
+    );
+    expect(wrapper.findAll(".item")).toHaveLength(3);
   });
 });
