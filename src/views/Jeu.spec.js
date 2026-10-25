@@ -18,23 +18,48 @@ function mountJeu(props) {
   return mount(Jeu, { props, global: { plugins: [router] } });
 }
 
-function mockGameResponse({ data = null, error = null }) {
-  supabase.from.mockReturnValue({
-    select: () => ({
-      eq: () => ({
-        maybeSingle: () => Promise.resolve({ data, error }),
+function mockGameResponse(
+  { data = null, error = null },
+  statsResponse = { data: [], error: null },
+) {
+  supabase.from.mockImplementation((table) => {
+    if (table === "games") {
+      return {
+        select: () => ({
+          eq: () => ({
+            maybeSingle: () => Promise.resolve({ data, error }),
+          }),
+        }),
+      };
+    }
+    return {
+      select: () => ({
+        eq: () => ({
+          order: () => Promise.resolve(statsResponse),
+        }),
       }),
-    }),
+    };
   });
 }
 
 function mockGamesBySlug(gamesBySlug) {
-  supabase.from.mockReturnValue({
-    select: () => ({
-      eq: (_column, slug) => ({
-        maybeSingle: () => Promise.resolve({ data: gamesBySlug[slug] ?? null, error: null }),
+  supabase.from.mockImplementation((table) => {
+    if (table === "games") {
+      return {
+        select: () => ({
+          eq: (_column, slug) => ({
+            maybeSingle: () => Promise.resolve({ data: gamesBySlug[slug] ?? null, error: null }),
+          }),
+        }),
+      };
+    }
+    return {
+      select: () => ({
+        eq: () => ({
+          order: () => Promise.resolve({ data: [], error: null }),
+        }),
       }),
-    }),
+    };
   });
 }
 
@@ -83,10 +108,10 @@ describe("Jeu", () => {
     expect(wrapper.find(".jeu-main .btn").exists()).toBe(false);
   });
 
-  it("propose une nouvelle partie à la place de l'invite de connexion quand connecté", async () => {
+  it("propose une nouvelle partie et ses stats à la place de l'invite de connexion quand connecté", async () => {
     user.value = { email: "lea@example.fr" };
     mockGameResponse({
-      data: { slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] },
+      data: { id: 1, slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] },
     });
     const wrapper = mountJeu({ slug: "wizard" });
     await flushPromises();
@@ -94,7 +119,8 @@ describe("Jeu", () => {
     const cta = wrapper.find(".jeu-main .btn");
     expect(cta.text()).toBe("Nouvelle partie de Wizard");
     expect(cta.attributes("href")).toBe("#/jeu/wizard/partie");
-    expect(wrapper.find(".jeu-side").exists()).toBe(false);
+    expect(wrapper.find(".jeu-side .note").exists()).toBe(false);
+    expect(wrapper.find(".jeu-side .label").text()).toBe("Mes stats");
   });
 
   it("n'affiche pas deux fois « solo » quand le tag recoupe le badge joueurs (Bingo)", async () => {
@@ -189,5 +215,151 @@ describe("Jeu", () => {
     await flushPromises();
 
     expect(wrapper.find(".muted").text()).toBe("Impossible de charger ce jeu pour le moment.");
+  });
+
+  it("affiche le tableau des stats trié par victoires", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockGameResponse(
+      { data: { id: 3, slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] } },
+      {
+        data: [
+          {
+            player_id: 1,
+            player_name: "Léa",
+            parties: 12,
+            victoires: 5,
+            record: 260,
+            moyenne: 168,
+          },
+          {
+            player_id: 2,
+            player_name: "Moi",
+            parties: 12,
+            victoires: 4,
+            record: 240,
+            moyenne: 155,
+          },
+        ],
+        error: null,
+      },
+    );
+    const wrapper = mountJeu({ slug: "wizard" });
+    await flushPromises();
+
+    const rows = wrapper.findAll(".stats-table tbody tr");
+    expect(rows).toHaveLength(2);
+    expect(rows[0].findAll("td").map((td) => td.text())).toEqual(["Léa", "12", "5", "260", "168"]);
+    expect(rows[1].findAll("td").map((td) => td.text())).toEqual(["Moi", "12", "4", "240", "155"]);
+  });
+
+  it("affiche un message quand aucune partie n'est enregistrée pour ce jeu", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockGameResponse({
+      data: { id: 4, slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] },
+    });
+    const wrapper = mountJeu({ slug: "wizard" });
+    await flushPromises();
+
+    expect(wrapper.find(".jeu-side .muted").text()).toBe(
+      "Aucune partie enregistrée pour ce jeu pour l'instant.",
+    );
+  });
+
+  it("affiche un message d'erreur si le chargement des stats échoue", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockGameResponse(
+      { data: { id: 5, slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] } },
+      { data: null, error: { message: "boom" } },
+    );
+    const wrapper = mountJeu({ slug: "wizard" });
+    await flushPromises();
+
+    expect(wrapper.find(".jeu-side .muted").text()).toBe(
+      "Impossible de charger les statistiques pour le moment.",
+    );
+  });
+
+  it("affiche un état de chargement des stats avant leur réponse", async () => {
+    user.value = { email: "lea@example.fr" };
+    let resolveStats;
+    const statsPromise = new Promise((resolve) => {
+      resolveStats = resolve;
+    });
+    supabase.from.mockImplementation((table) => {
+      if (table === "games") {
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () =>
+                Promise.resolve({
+                  data: {
+                    id: 6,
+                    slug: "wizard",
+                    name: "Wizard",
+                    players_min: 3,
+                    players_max: 6,
+                    tags: [],
+                  },
+                  error: null,
+                }),
+            }),
+          }),
+        };
+      }
+      return {
+        select: () => ({
+          eq: () => ({
+            order: () => statsPromise,
+          }),
+        }),
+      };
+    });
+    const wrapper = mountJeu({ slug: "wizard" });
+    await flushPromises();
+
+    expect(wrapper.find(".jeu-side .muted").text()).toBe("Chargement…");
+
+    resolveStats({ data: [], error: null });
+    await flushPromises();
+
+    expect(wrapper.find(".jeu-side .muted").text()).toBe(
+      "Aucune partie enregistrée pour ce jeu pour l'instant.",
+    );
+  });
+
+  it("charge les stats à la connexion sans recharger le jeu", async () => {
+    mockGameResponse({
+      data: { id: 7, slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] },
+    });
+    const wrapper = mountJeu({ slug: "wizard" });
+    await flushPromises();
+    expect(wrapper.find(".jeu-side .note").exists()).toBe(true);
+
+    mockGameResponse(
+      { data: { id: 7, slug: "wizard", name: "Wizard", players_min: 3, players_max: 6, tags: [] } },
+      {
+        data: [
+          { player_id: 1, player_name: "Léa", parties: 3, victoires: 1, record: 100, moyenne: 80 },
+        ],
+        error: null,
+      },
+    );
+    user.value = { email: "lea@example.fr" };
+    await flushPromises();
+
+    expect(wrapper.find(".jeu-side .note").exists()).toBe(false);
+    expect(wrapper.findAll(".stats-table tbody tr")).toHaveLength(1);
+  });
+
+  it("vide les stats si l'utilisateur change alors qu'aucun jeu n'est chargé", async () => {
+    mockGameResponse({ data: null });
+    const wrapper = mountJeu({ slug: "inconnu" });
+    await flushPromises();
+    expect(wrapper.find(".muted").text()).toBe("Ce jeu n'existe pas.");
+
+    user.value = { email: "lea@example.fr" };
+    await flushPromises();
+
+    expect(wrapper.find(".muted").text()).toBe("Ce jeu n'existe pas.");
   });
 });

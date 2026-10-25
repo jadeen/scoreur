@@ -381,6 +381,44 @@ a:hover {
   }
 }
 
+/* Stats par jeu : tableau joueurs/parties/victoires/record, moyenne en plus sur desktop */
+.stats-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-table th,
+.stats-table td {
+  border-bottom: 1px solid var(--panel-separator);
+  padding: 7px 4px;
+  text-align: right;
+}
+
+.stats-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.stats-table th:first-child,
+.stats-table td:first-child {
+  text-align: left;
+}
+
+.stats-table th:last-child,
+.stats-table td:last-child {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .stats-table th:last-child,
+  .stats-table td:last-child {
+    display: table-cell;
+  }
+}
+
 /* Catalogue : liste mobile, colonne de filtres + grille desktop */
 .catalogue-layout {
   display: flex;
