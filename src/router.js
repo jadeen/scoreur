@@ -3,6 +3,7 @@ import Accueil from "./views/Accueil.vue";
 import Catalogue from "./views/Catalogue.vue";
 import Jeu from "./views/Jeu.vue";
 import Joueurs from "./views/Joueurs.vue";
+import NouvellePartie from "./views/NouvellePartie.vue";
 
 export const router = createRouter({
   history: createWebHashHistory(),
@@ -20,6 +21,12 @@ export const router = createRouter({
       component: Jeu,
       props: true,
       meta: { back: { to: "/jeux", label: "Jeux" } },
+    },
+    {
+      path: "/jeu/:slug/partie",
+      name: "nouvelle-partie",
+      component: NouvellePartie,
+      props: true,
     },
     {
       path: "/joueurs",

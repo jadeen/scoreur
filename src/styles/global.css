@@ -663,3 +663,242 @@ a:hover {
     min-width: 0;
   }
 }
+
+/* Nouvelle partie : configuration, feuille générique, fin de partie */
+.back-link {
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.partie-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.config-step,
+.feuille-step,
+.fin-step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pl {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  border-radius: var(--radius-panel);
+  padding: 0 12px;
+  min-height: 48px;
+  font-size: 15px;
+}
+
+.pl.off {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-secondary);
+}
+
+.pl input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--gold);
+}
+
+.hint-count {
+  font-size: 13px;
+}
+
+/* Carte papier d'entrée de score, comme le panneau d'annonces des feuilles dédiées */
+.hand {
+  background: var(--paper);
+  color: var(--paper-text);
+  border-radius: var(--radius-card);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid var(--paper-separator);
+}
+
+.pr:first-of-type {
+  border-top: 0;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--felt);
+  color: var(--text);
+  font: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.step button:first-child {
+  background: var(--paper);
+  border: 2px solid var(--felt);
+  color: var(--felt);
+}
+
+.step output {
+  width: 36px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Classement : jetons de score, en tête doré, négatif rouge */
+.classement {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 8px;
+}
+
+.st {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.st span:first-child {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.st span:last-child {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.st b {
+  order: -1;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--token-blue);
+  border: 4px dashed var(--paper);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 17px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.st.lead b {
+  background: var(--gold);
+  color: var(--paper-text);
+}
+
+.st.neg b {
+  background: var(--token-red);
+  font-size: 15px;
+}
+
+/* Bandeau de fin : vainqueur, classement final, note */
+.bandeau-fin {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.win {
+  background: var(--paper);
+  color: var(--paper-text);
+  border-radius: var(--radius-card);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.win .muted {
+  color: var(--paper-text-secondary);
+}
+
+.win .ph {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 4px dashed var(--paper);
+  box-shadow: 0 0 0 2px var(--gold);
+  box-sizing: border-box;
+}
+
+.win strong {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+}
+
+.rk {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--panel-separator);
+  font-variant-numeric: tabular-nums;
+}
+
+.rk:last-child {
+  border-bottom: 0;
+}
+
+.rk .n {
+  width: 24px;
+  color: var(--text-secondary);
+}
+
+.rk .p {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+.field textarea {
+  font: inherit;
+  background: var(--paper);
+  color: var(--paper-text);
+  border: 1px solid var(--gold-shadow);
+  border-radius: var(--radius-panel);
+  padding: 10px 14px;
+  min-height: 72px;
+  box-sizing: border-box;
+  resize: vertical;
+}
