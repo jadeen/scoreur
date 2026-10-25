@@ -16,6 +16,12 @@ const renameError = ref(null);
 
 const moiError = ref(null);
 
+const stats = ref({});
+
+const confirmingDeleteId = ref(null);
+const deleting = ref(false);
+const deleteError = ref(null);
+
 function friendlyError(error) {
   if (error.code === "23505") return "Ce nom existe déjà dans ton carnet.";
   return "Impossible d'enregistrer pour le moment.";
@@ -33,18 +39,34 @@ async function loadPlayers() {
   loading.value = false;
 }
 
+async function loadStats() {
+  const { data } = await supabase.from("player_stats").select("*");
+  const byPlayerId = {};
+  for (const row of data ?? []) {
+    byPlayerId[row.player_id] = row;
+  }
+  stats.value = byPlayerId;
+}
+
 watch(
   user,
   (current) => {
     if (current) {
       loadPlayers();
+      loadStats();
     } else {
       players.value = [];
+      stats.value = {};
       loading.value = false;
     }
   },
   { immediate: true },
 );
+
+function statsLabel(player) {
+  const { parties = 0, victoires = 0 } = stats.value[player.id] ?? {};
+  return `${parties} partie${parties > 1 ? "s" : ""} · ${victoires} victoire${victoires > 1 ? "s" : ""}`;
+}
 
 // « moi » en tête, le reste dans l'ordre alphabétique déjà renvoyé par la requête
 // (Array#sort est stable, l'ordre relatif des autres joueurs est conservé).
@@ -107,6 +129,29 @@ async function markAsMoi(player) {
   if (previous) previous.is_me = false;
   player.is_me = true;
 }
+
+function confirmDelete(player) {
+  confirmingDeleteId.value = player.id;
+  deleteError.value = null;
+}
+
+function cancelDelete() {
+  confirmingDeleteId.value = null;
+  deleteError.value = null;
+}
+
+async function deletePlayer(player) {
+  deleting.value = true;
+  deleteError.value = null;
+  const { error } = await supabase.from("players").delete().eq("id", player.id);
+  deleting.value = false;
+  if (error) {
+    deleteError.value = "Impossible de supprimer ce joueur pour le moment.";
+    return;
+  }
+  players.value = players.value.filter((p) => p.id !== player.id);
+  confirmingDeleteId.value = null;
+}
 </script>
 
 <template>
@@ -158,19 +203,43 @@ async function markAsMoi(player) {
               <button class="lk" type="submit">Enregistrer</button>
               <button class="lk" type="button" @click="cancelRename">Annuler</button>
             </form>
-            <strong v-else
-              >{{ player.name }}<span v-if="player.is_me" class="badge">moi</span></strong
-            >
+            <template v-else>
+              <strong>{{ player.name }}<span v-if="player.is_me" class="badge">moi</span></strong>
+              <span class="muted">{{ statsLabel(player) }}</span>
+            </template>
             <p v-if="renamingId === player.id && renameError" class="muted error-rename">
               {{ renameError }}
             </p>
           </div>
 
-          <div v-if="renamingId !== player.id" class="actions">
+          <div v-if="renamingId !== player.id && confirmingDeleteId !== player.id" class="actions">
             <button class="lk" type="button" @click="startRename(player)">Renommer</button>
             <button v-if="!player.is_me" class="lk" type="button" @click="markAsMoi(player)">
               Marquer comme moi
             </button>
+            <button v-if="!player.is_me" class="lk" type="button" @click="confirmDelete(player)">
+              Supprimer
+            </button>
+          </div>
+
+          <div v-if="confirmingDeleteId === player.id" class="confirm-delete">
+            <p class="muted">
+              Supprimer {{ player.name }} et retirer ses scores des parties passées ?
+            </p>
+            <p v-if="deleteError" class="muted error-delete">{{ deleteError }}</p>
+            <div class="confirm-delete-actions">
+              <button class="btn" type="button" :disabled="deleting" @click="cancelDelete">
+                Annuler
+              </button>
+              <button
+                class="btn red"
+                type="button"
+                :disabled="deleting"
+                @click="deletePlayer(player)"
+              >
+                {{ deleting ? "Suppression…" : "Supprimer" }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
