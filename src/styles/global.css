@@ -1243,8 +1243,24 @@ a:hover {
 }
 
 /* Accueil visiteur : illustration, CTA de connexion, jeux en vedette */
+.accueil-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+@media (min-width: 1024px) {
+  .accueil-hero {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+}
+
 .hero {
   position: relative;
+  width: 260px;
   height: 110px;
 }
 
@@ -1330,15 +1346,7 @@ a:hover {
 
 /* Accueil connecté : reprise de partie, parties récentes (deux colonnes dès 1024px) */
 .accueil-cta {
-  min-height: 64px;
-  font-size: 18px;
-}
-
-@media (min-width: 1024px) {
-  .accueil-cta {
-    min-height: 80px;
-    font-size: 20px;
-  }
+  margin-top: 8px;
 }
 
 .tile {
@@ -1422,6 +1430,7 @@ a:hover {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  margin-top: 10px;
 }
 
 @media (min-width: 1024px) {

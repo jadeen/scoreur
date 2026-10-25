@@ -145,20 +145,22 @@ watch(
   </div>
 
   <div v-else class="accueil-visiteur">
-    <div class="hero" aria-hidden="true">
-      <span class="hero-card hero-card--1"></span>
-      <span class="hero-card hero-card--2"></span>
-      <span class="hero-card hero-card--3"></span>
-    </div>
+    <div class="accueil-hero">
+      <div class="hero" aria-hidden="true">
+        <span class="hero-card hero-card--1"></span>
+        <span class="hero-card hero-card--2"></span>
+        <span class="hero-card hero-card--3"></span>
+      </div>
 
-    <h1 class="h1">Le carnet de scores de vos soirées jeux</h1>
-    <p class="muted">
-      Notez chaque partie, voyez qui gagne le plus, et revoyez toutes les feuilles de score.
-    </p>
-    <button class="btn primary accueil-connect-btn" type="button" @click="signInWithGoogle">
-      Se connecter avec Google
-    </button>
-    <p class="muted">Seul celui qui tient le carnet a besoin d'un compte.</p>
+      <h1 class="h1">Le carnet de scores de vos soirées jeux</h1>
+      <p class="muted">
+        Notez chaque partie, voyez qui gagne le plus, et revoyez toutes les feuilles de score.
+      </p>
+      <button class="btn primary accueil-connect-btn" type="button" @click="signInWithGoogle">
+        Se connecter avec Google
+      </button>
+      <p class="muted">Seul celui qui tient le carnet a besoin d'un compte.</p>
+    </div>
 
     <div class="accueil-games-section">
       <div class="row">
