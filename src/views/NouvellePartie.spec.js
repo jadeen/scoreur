@@ -487,6 +487,40 @@ describe("NouvellePartie", () => {
     expect(wrapper.text()).not.toContain("Terminer la partie");
   });
 
+  it("abandonne une partie Wizard en cours : efface le brouillon et revient à la page du jeu", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "wizard-v1", players_min: 3, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await router.push("/jeu/wizard/partie");
+    await flushPromises();
+    await flushPromises();
+
+    await wrapper.findAll(".pl input")[1].trigger("change");
+    await wrapper.findAll(".pl input")[2].trigger("change");
+    await wrapper.find(".btn.primary").trigger("click");
+
+    const feuille = wrapper.findComponent(FeuilleWizard);
+    feuille.vm.$emit("update:details", {
+      joueurs: [3, 1, 2],
+      manches: [{ annonces: [0], plis: [0] }],
+    });
+    await flushPromises();
+    expect(loadDraft("wizard")).not.toBeNull();
+
+    const abandonButton = wrapper
+      .findAll(".feuille-step .btn")
+      .find((btn) => btn.text() === "Abandonner la partie");
+    await abandonButton.trigger("click");
+    await flushPromises();
+
+    expect(supabase.rpc).not.toHaveBeenCalled();
+    expect(loadDraft("wizard")).toBeNull();
+    expect(router.currentRoute.value.path).toBe("/jeu/wizard");
+  });
+
   it("enregistre une partie Wizard avec le détail en wizard-v1 une fois la feuille terminée", async () => {
     user.value = { email: "lea@example.fr" };
     mockTables({

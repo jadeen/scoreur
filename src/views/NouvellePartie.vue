@@ -279,15 +279,17 @@ function onAbandon() {
       >
         <Classement :players="feuillePlayers" :lower-wins="game.lower_wins" />
 
-        <FeuilleWizard
-          v-if="isWizard"
-          :players="feuillePlayers"
-          :variant="variant"
-          :initial-details="details"
-          @update:scores="onWizardScores"
-          @update:details="onWizardDetails"
-          @fin="step = 'fin'"
-        />
+        <template v-if="isWizard">
+          <FeuilleWizard
+            :players="feuillePlayers"
+            :variant="variant"
+            :initial-details="details"
+            @update:scores="onWizardScores"
+            @update:details="onWizardDetails"
+            @fin="step = 'fin'"
+          />
+          <button class="btn" type="button" @click="onAbandon">Abandonner la partie</button>
+        </template>
 
         <div v-else class="hand">
           <h2 class="h2">Scores</h2>
