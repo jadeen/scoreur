@@ -29,6 +29,44 @@ a:hover {
   min-height: 100vh;
 }
 
+.alpha-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--gold);
+  color: var(--paper-text);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.alpha-banner a {
+  color: var(--paper-text);
+  text-decoration: underline;
+}
+
+.alpha-banner a:hover {
+  color: var(--paper-text);
+}
+
+.alpha-banner__close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--paper-text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .logo {
   font-family: var(--font-display);
   font-weight: 400;
