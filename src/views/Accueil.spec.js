@@ -155,9 +155,14 @@ describe("Accueil, connecté", () => {
     expect(items[0].attributes("href")).toBe("#/partie/1");
 
     const quicklinks = wrapper.findAll(".accueil-quicklinks .btn");
-    expect(quicklinks.map((link) => link.text())).toEqual(["Mes joueurs", "Catalogue"]);
+    expect(quicklinks.map((link) => link.text())).toEqual([
+      "Mes joueurs",
+      "Catalogue",
+      "Mon compte",
+    ]);
     expect(quicklinks[0].attributes("href")).toBe("#/joueurs");
     expect(quicklinks[1].attributes("href")).toBe("#/jeux");
+    expect(quicklinks[2].attributes("href")).toBe("#/compte");
   });
 
   it("déduplique les jeux récents par jeu et les limite à trois, sans dédupliquer les dernières parties", async () => {

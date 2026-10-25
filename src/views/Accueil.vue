@@ -141,6 +141,7 @@ watch(
     <div class="accueil-quicklinks">
       <router-link class="btn" to="/joueurs">Mes joueurs</router-link>
       <router-link class="btn" to="/jeux">Catalogue</router-link>
+      <router-link class="btn" to="/compte">Mon compte</router-link>
     </div>
   </div>
 

@@ -147,21 +147,7 @@ a:hover {
   align-items: center;
   gap: 8px;
   min-width: 0;
-}
-
-.who__name {
-  font-size: 14px;
-  font-weight: 600;
-  max-width: 64px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-@media (min-width: 1024px) {
-  .who__name {
-    max-width: none;
-  }
+  text-decoration: none;
 }
 
 .avatar {
@@ -179,29 +165,6 @@ a:hover {
   font-weight: 400;
   font-size: 13px;
   color: var(--paper-text);
-}
-
-.link-btn {
-  background: none;
-  border: 0;
-  padding: 0;
-  font: inherit;
-  font-size: 12px;
-  color: var(--gold);
-  text-decoration: underline;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-@media (min-width: 1024px) {
-  .link-btn {
-    font-size: 13px;
-  }
-}
-
-.link-btn:hover {
-  color: var(--gold-hover);
 }
 
 @media (min-width: 1024px) {
@@ -1586,4 +1549,75 @@ a:hover {
 .bingo-complete {
   color: var(--status-ok-text);
   font-weight: 600;
+}
+
+/* Pied de page : mentions légales et confidentialité, sur toutes les pages */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px;
+  border-top: 1px solid var(--panel-separator);
+  font-size: 13px;
+}
+
+@media (min-width: 1024px) {
+  .footer {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* Mon compte : qui, raccourcis, suppression du compte */
+.compte-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.who .t {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.compte-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.compte-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 4px;
+  border-bottom: 1px solid var(--panel-separator);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.compte-danger {
+  border: 1px dashed var(--danger);
+  border-radius: var(--radius-panel);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Pages légales : texte long, largeur limitée en desktop pour la lisibilité */
+.legal-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@media (min-width: 1024px) {
+  .legal-page {
+    max-width: 640px;
+  }
 }
