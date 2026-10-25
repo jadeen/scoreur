@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
 import { formatDateShort } from "../lib/formatDate";
-import { gameColors } from "../lib/gameColors";
 import { user } from "../lib/auth";
 import { supabase } from "../lib/supabase";
 
@@ -14,7 +13,7 @@ async function loadMatches() {
   loadError.value = null;
   const { data, error } = await supabase
     .from("matches")
-    .select("id, played_at, games(name, slug), match_players(score, is_winner, players(name))")
+    .select("id, played_at, games(name, color), match_players(score, is_winner, players(name))")
     .order("played_at", { ascending: false });
   if (error) {
     loadError.value = error.message;
@@ -72,7 +71,7 @@ function winnersSummary(match) {
         class="item"
         :to="{ name: 'partie', params: { id: match.id } }"
       >
-        <span class="jet" :style="{ background: gameColors[match.games.slug] }"></span>
+        <span class="jet" :style="{ background: match.games.color }"></span>
         <span class="t">
           <span class="row">
             <strong>{{ match.games.name }}</strong>
