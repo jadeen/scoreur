@@ -902,3 +902,81 @@ a:hover {
   box-sizing: border-box;
   resize: vertical;
 }
+
+/* Historique : liste des parties, jeton coloré par jeu */
+.historique-layout,
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.jet {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px dashed var(--paper);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .match-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .match-list .item {
+    background: var(--paper);
+    color: var(--paper-text);
+    border: 0;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  .match-list .item .muted {
+    color: var(--paper-text-secondary);
+  }
+}
+
+/* Revoir une partie : classement final en lecture seule, suppression */
+.partie-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.danger {
+  font: inherit;
+  font-size: 14px;
+  background: none;
+  border: 0;
+  color: var(--danger);
+  text-decoration: underline;
+  padding: 8px 0;
+  align-self: flex-start;
+  cursor: pointer;
+}
+
+.btn.red {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.confirm-delete {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirm-delete-actions {
+  display: flex;
+  gap: 10px;
+}

@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import { gameColors } from "../lib/gameColors";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
@@ -8,12 +9,6 @@ const loading = ref(true);
 const error = ref(null);
 const search = ref("");
 const activeTags = ref([]);
-
-const gameColors = {
-  wizard: "var(--game-wizard)",
-  odin: "var(--game-odin)",
-  bingo: "var(--game-bingo)",
-};
 
 const availableTags = computed(() => [...new Set(games.value.flatMap((game) => game.tags))].sort());
 
