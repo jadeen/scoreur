@@ -1,10 +1,12 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import TableauManches from "../components/TableauManches.vue";
 import { user } from "../lib/auth";
 import { formatDateLong } from "../lib/formatDate";
 import { rankPlayers } from "../lib/ranking";
 import { supabase } from "../lib/supabase";
+import { wizardLedgerRows } from "../lib/wizardScoring";
 
 const props = defineProps({
   id: { type: String, required: true },
@@ -31,7 +33,7 @@ async function loadMatch() {
   const { data, error } = await supabase
     .from("matches")
     .select(
-      "id, played_at, notes, games(name, lower_wins), match_players(score, players(id, name))",
+      "id, played_at, notes, details, details_format, games(name, lower_wins), match_players(score, players(id, name))",
     )
     .eq("id", props.id)
     .maybeSingle();
@@ -72,6 +74,22 @@ const winnersLabel = computed(() => winners.value.map((player) => player.name).j
 const playersCountLabel = computed(() =>
   ranked.value.length === 1 ? "solo" : `${ranked.value.length} joueurs`,
 );
+
+const wizardLedger = computed(() => {
+  if (match.value.details_format !== "wizard-v1") return null;
+  const namesById = new Map(
+    match.value.match_players.map((mp) => [mp.players.id, mp.players.name]),
+  );
+  const ledgerPlayers = match.value.details.joueurs.map((id) => ({ id, name: namesById.get(id) }));
+  const rounds = match.value.details.manches.map((manche) => ({
+    bids: manche.annonces,
+    tricks: manche.plis,
+  }));
+  return {
+    players: ledgerPlayers,
+    rows: wizardLedgerRows(rounds, ledgerPlayers.length),
+  };
+});
 
 async function deleteMatch() {
   deleting.value = true;
@@ -114,6 +132,14 @@ async function deleteMatch() {
           <span>{{ player.name }}</span>
           <span class="p">{{ player.score }}</span>
         </div>
+      </div>
+
+      <div v-if="wizardLedger" class="ledger-section">
+        <h2 class="h2">Feuille de score</h2>
+        <TableauManches :players="wizardLedger.players" :rows="wizardLedger.rows" />
+        <p class="muted">
+          Feuille redessinée à partir du détail archivé (format wizard-v1), en lecture seule.
+        </p>
       </div>
 
       <div v-if="match.notes" class="box">

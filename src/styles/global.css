@@ -1017,3 +1017,218 @@ a:hover {
   display: flex;
   gap: 10px;
 }
+
+/* Options du jeu (config d'une nouvelle partie) : variante, etc. */
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--gold);
+}
+
+/* Feuille Wizard : en-tête de manche, segmented control annonces/plis */
+.hand-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.seg {
+  display: flex;
+  gap: 2px;
+  background: var(--panel);
+  border-radius: var(--radius-chip);
+  padding: 3px;
+}
+
+.seg span {
+  padding: 4px 12px;
+  border-radius: var(--radius-chip);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper-text-secondary);
+}
+
+.seg span.on {
+  background: var(--felt);
+  color: var(--text);
+}
+
+/* Ligne de saisie d'une manche : nom + étiquettes, puis stepper */
+.round-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.round-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.round-tag {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--paper-text-secondary);
+}
+
+.round-tag.donne {
+  color: var(--gold-shadow);
+}
+
+.round-ctl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bidref {
+  font-size: 13px;
+  color: var(--paper-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.delta {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 3px 8px;
+  border-radius: 7px;
+  min-width: 44px;
+  text-align: center;
+}
+
+.delta.pos {
+  color: var(--status-ok-text);
+  background: var(--status-ok-bg);
+}
+
+.delta.neg {
+  color: var(--token-red);
+  background: var(--status-bad-bg);
+}
+
+.status {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  padding: 9px 12px;
+  border-radius: var(--radius-panel);
+}
+
+.status.ok {
+  background: var(--status-ok-bg);
+  color: var(--status-ok-text);
+  font-weight: 600;
+}
+
+.status.warn {
+  background: var(--status-bad-bg);
+  color: var(--token-red);
+  font-weight: 600;
+}
+
+.hand-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Feuille de manches : en-tête avec l'action d'annulation, tableau défilant */
+.ledger-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ledger-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.manches-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+.manches-table th,
+.manches-table td {
+  padding: 8px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--panel-separator);
+  white-space: nowrap;
+}
+
+.manches-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.manches-table th:first-child,
+.manches-table td:first-child {
+  text-align: left;
+  color: var(--text-secondary);
+}
+
+.manches-table td .tot {
+  font-weight: 700;
+}
+
+.manches-table td small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.manches-table td.neg .tot {
+  color: var(--danger);
+}
+
+.empty {
+  padding: 14px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Feuille Wizard en desktop : classement + saisie à gauche, feuille de manches à droite */
+@media (min-width: 1024px) {
+  .feuille-step--wizard {
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) 1fr;
+    align-items: start;
+    gap: 24px;
+  }
+
+  .feuille-step--wizard .classement,
+  .feuille-step--wizard .hand {
+    grid-column: 1;
+  }
+
+  .feuille-step--wizard .ledger-section {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}

@@ -3,12 +3,14 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import BandeauFin from "../components/BandeauFin.vue";
 import Classement from "../components/Classement.vue";
+import FeuilleWizard from "../components/FeuilleWizard.vue";
 import Stepper from "../components/Stepper.vue";
 import { user } from "../lib/auth";
 import { clearDraft, loadDraft, saveDraft } from "../lib/draft";
 import { playersLabel } from "../lib/playersLabel";
 import { rankPlayers } from "../lib/ranking";
 import { supabase } from "../lib/supabase";
+import { wizardRoundCount } from "../lib/wizardScoring";
 
 const props = defineProps({
   slug: { type: String, required: true },
@@ -27,6 +29,10 @@ const playersError = ref(false);
 const step = ref("config");
 const selected = ref([]);
 const scores = reactive({});
+const variant = ref(false);
+const details = ref(null);
+
+const isWizard = computed(() => game.value?.sheet === "wizard-v1");
 
 const newName = ref("");
 const addError = ref(null);
@@ -60,6 +66,10 @@ function restoreDraft() {
 
   selected.value = ids;
   for (const id of ids) scores[id] = draft.scores[id];
+  if (draft.details) {
+    details.value = draft.details;
+    variant.value = Boolean(draft.details.variante_pas_egal);
+  }
   step.value = "feuille";
   return true;
 }
@@ -128,10 +138,23 @@ const canStart = computed(
 );
 
 function persistDraft() {
-  saveDraft(props.slug, { playerIds: selected.value, scores: { ...scores } });
+  saveDraft(props.slug, {
+    playerIds: selected.value,
+    scores: { ...scores },
+    details: details.value,
+  });
 }
 
 watch(scores, persistDraft, { deep: true });
+watch(details, persistDraft, { deep: true });
+
+function onWizardScores(wizardScores) {
+  Object.assign(scores, wizardScores);
+}
+
+function onWizardDetails(wizardDetails) {
+  details.value = wizardDetails;
+}
 
 function startGame() {
   for (const id of selected.value) scores[id] = 0;
@@ -158,6 +181,7 @@ async function onSave(noteText) {
       is_winner: player.isWinner,
     })),
     p_notes: noteText.trim() || null,
+    ...(details.value ? { p_details: details.value, p_details_format: game.value.sheet } : {}),
   });
   saving.value = false;
   if (error) {
@@ -228,6 +252,18 @@ function onAbandon() {
         </form>
         <p v-if="addError" class="muted error-add">{{ addError }}</p>
 
+        <div v-if="isWizard" class="box">
+          <h2 class="h2">Options du jeu</h2>
+          <label class="check">
+            <input v-model="variant" type="checkbox" />
+            <span>Variante : le total des annonces ne peut pas égaler le nombre de plis</span>
+          </label>
+          <p v-if="selected.length" class="muted">
+            {{ selected.length }} joueur{{ selected.length > 1 ? "s" : "" }} ·
+            {{ wizardRoundCount(selected.length) }} manches
+          </p>
+        </div>
+
         <p v-if="!canStart" class="muted hint-count">
           {{ playersLabel(game) }} nécessaires pour commencer.
         </p>
@@ -236,10 +272,26 @@ function onAbandon() {
         </button>
       </div>
 
-      <div v-else-if="step === 'feuille'" class="feuille-step">
+      <div
+        v-else-if="step === 'feuille'"
+        class="feuille-step"
+        :class="{ 'feuille-step--wizard': isWizard }"
+      >
         <Classement :players="feuillePlayers" :lower-wins="game.lower_wins" />
 
-        <div class="hand">
+        <template v-if="isWizard">
+          <FeuilleWizard
+            :players="feuillePlayers"
+            :variant="variant"
+            :initial-details="details"
+            @update:scores="onWizardScores"
+            @update:details="onWizardDetails"
+            @fin="step = 'fin'"
+          />
+          <button class="btn" type="button" @click="onAbandon">Abandonner la partie</button>
+        </template>
+
+        <div v-else class="hand">
           <h2 class="h2">Scores</h2>
           <div v-for="player in feuillePlayers" :key="player.id" class="pr">
             <span>{{ player.name }}</span>

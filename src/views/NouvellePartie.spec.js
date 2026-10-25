@@ -1,5 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import FeuilleWizard from "../components/FeuilleWizard.vue";
 import { loadDraft, saveDraft } from "../lib/draft";
 import { user } from "../lib/auth";
 import { supabase } from "../lib/supabase";
@@ -441,5 +442,150 @@ describe("NouvellePartie", () => {
     expect(wrapper.find(".note").text()).toBe(
       "Connecte-toi avec Google pour enregistrer une partie.",
     );
+  });
+
+  it("affiche les options Wizard à la configuration", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "wizard-v1", players_min: 3, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    expect(wrapper.find(".box .check span").text()).toBe(
+      "Variante : le total des annonces ne peut pas égaler le nombre de plis",
+    );
+    expect(wrapper.find(".box .muted").text()).toBe("1 joueur · 60 manches");
+
+    await wrapper.findAll(".pl input")[1].trigger("change");
+    expect(wrapper.find(".box .muted").text()).toBe("2 joueurs · 30 manches");
+
+    const variantCheckbox = wrapper.find(".box .check input");
+    expect(variantCheckbox.element.checked).toBe(false);
+    await variantCheckbox.setValue(true);
+    expect(variantCheckbox.element.checked).toBe(true);
+  });
+
+  it("démarre une partie Wizard et affiche la feuille dédiée", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "wizard-v1", players_min: 3, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    await wrapper.findAll(".pl input")[1].trigger("change");
+    await wrapper.findAll(".pl input")[2].trigger("change");
+    await wrapper.find(".btn.primary").trigger("click");
+
+    expect(wrapper.find(".feuille-step").classes()).toContain("feuille-step--wizard");
+    expect(wrapper.findComponent(FeuilleWizard).exists()).toBe(true);
+    expect(wrapper.text()).not.toContain("Terminer la partie");
+  });
+
+  it("abandonne une partie Wizard en cours : efface le brouillon et revient à la page du jeu", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "wizard-v1", players_min: 3, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await router.push("/jeu/wizard/partie");
+    await flushPromises();
+    await flushPromises();
+
+    await wrapper.findAll(".pl input")[1].trigger("change");
+    await wrapper.findAll(".pl input")[2].trigger("change");
+    await wrapper.find(".btn.primary").trigger("click");
+
+    const feuille = wrapper.findComponent(FeuilleWizard);
+    feuille.vm.$emit("update:details", {
+      joueurs: [3, 1, 2],
+      manches: [{ annonces: [0], plis: [0] }],
+    });
+    await flushPromises();
+    expect(loadDraft("wizard")).not.toBeNull();
+
+    const abandonButton = wrapper
+      .findAll(".feuille-step .btn")
+      .find((btn) => btn.text() === "Abandonner la partie");
+    await abandonButton.trigger("click");
+    await flushPromises();
+
+    expect(supabase.rpc).not.toHaveBeenCalled();
+    expect(loadDraft("wizard")).toBeNull();
+    expect(router.currentRoute.value.path).toBe("/jeu/wizard");
+  });
+
+  it("enregistre une partie Wizard avec le détail en wizard-v1 une fois la feuille terminée", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "wizard-v1", players_min: 3, players_max: 6 }),
+      players: makePlayers(),
+    });
+    supabase.rpc.mockResolvedValue({ error: null });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    await wrapper.findAll(".pl input")[1].trigger("change");
+    await wrapper.findAll(".pl input")[2].trigger("change");
+    await wrapper.find(".btn.primary").trigger("click");
+
+    const feuille = wrapper.findComponent(FeuilleWizard);
+    const wizardDetails = {
+      joueurs: [3, 1, 2],
+      premier_donneur: 0,
+      variante_pas_egal: false,
+      manches: [{ annonces: [0, 0, 0], plis: [0, 0, 0] }],
+    };
+    feuille.vm.$emit("update:scores", { 3: 20, 1: 20, 2: 20 });
+    feuille.vm.$emit("update:details", wizardDetails);
+    feuille.vm.$emit("fin");
+    await flushPromises();
+
+    expect(wrapper.find(".fin-step").exists()).toBe(true);
+
+    await wrapper.find(".bandeau-fin .btn.primary").trigger("click");
+    await flushPromises();
+
+    expect(supabase.rpc).toHaveBeenCalledWith("save_match", {
+      p_game_id: 10,
+      p_players: expect.arrayContaining([
+        expect.objectContaining({ player_id: 3, score: 20 }),
+        expect.objectContaining({ player_id: 1, score: 20 }),
+        expect.objectContaining({ player_id: 2, score: 20 }),
+      ]),
+      p_notes: null,
+      p_details: wizardDetails,
+      p_details_format: "wizard-v1",
+    });
+  });
+
+  it("reprend un brouillon Wizard avec ses manches et sa variante", async () => {
+    user.value = { email: "lea@example.fr" };
+    const wizardDetails = {
+      joueurs: [3],
+      premier_donneur: 0,
+      variante_pas_egal: true,
+      manches: [{ annonces: [0], plis: [0] }],
+    };
+    saveDraft("wizard", { playerIds: [3], scores: { 3: 20 }, details: wizardDetails });
+    mockTables({
+      game: makeGame({ sheet: "wizard-v1", players_min: 3, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    const feuille = wrapper.findComponent(FeuilleWizard);
+    expect(feuille.exists()).toBe(true);
+    expect(feuille.props("initialDetails")).toEqual(wizardDetails);
+    expect(feuille.props("variant")).toBe(true);
   });
 });

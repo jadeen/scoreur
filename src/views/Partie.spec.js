@@ -150,6 +150,48 @@ describe("Partie", () => {
     expect(wrapper.find(".win strong").text()).toBe("Hugo");
   });
 
+  it("affiche la feuille de manches Wizard reconstituée depuis le détail archivé", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockMatchTable({
+      select: {
+        data: makeMatchDetail({
+          details_format: "wizard-v1",
+          details: {
+            joueurs: [1, 2],
+            premier_donneur: 0,
+            variante_pas_egal: false,
+            manches: [{ annonces: [0, 1], plis: [0, 1] }],
+          },
+          match_players: [
+            { score: 20, players: { id: 1, name: "Léa" } },
+            { score: 30, players: { id: 2, name: "Hugo" } },
+          ],
+        }),
+        error: null,
+      },
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+
+    expect(wrapper.find(".h2").text()).toBe("Feuille de score");
+    const headers = wrapper.findAll("th");
+    expect(headers.map((th) => th.text())).toEqual(["Manche", "Léa", "Hugo"]);
+    expect(wrapper.find("tbody td .tot").text()).toBe("20");
+    expect(wrapper.find(".muted.empty").exists()).toBe(false);
+    expect(wrapper.text()).toContain(
+      "Feuille redessinée à partir du détail archivé (format wizard-v1), en lecture seule.",
+    );
+  });
+
+  it("n'affiche pas de feuille de manches pour une partie générique", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockMatchTable({ select: { data: makeMatchDetail(), error: null } });
+    const wrapper = mountPartie();
+    await flushPromises();
+
+    expect(wrapper.find("table").exists()).toBe(false);
+  });
+
   it("affiche la note de la partie quand il y en a une", async () => {
     user.value = { email: "lea@example.fr" };
     mockMatchTable({
