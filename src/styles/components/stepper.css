@@ -1,0 +1,32 @@
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--felt);
+  color: var(--text);
+  font: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.step button:first-child {
+  background: var(--paper);
+  border: 2px solid var(--felt);
+  color: var(--felt);
+}
+
+.step output {
+  width: 36px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}

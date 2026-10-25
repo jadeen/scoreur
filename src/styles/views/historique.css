@@ -1,0 +1,26 @@
+/* Historique : liste des parties, jeton coloré par jeu */
+.historique-layout,
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 1024px) {
+  .match-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .match-list .item {
+    background: var(--paper);
+    color: var(--paper-text);
+    border: 0;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  .match-list .item .muted {
+    color: var(--paper-text-secondary);
+  }
+}

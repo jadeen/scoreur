@@ -1,0 +1,53 @@
+/* Classement : jetons de score, en tête doré, négatif rouge */
+.classement {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 8px;
+}
+
+.st {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.st span:first-child {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.st span:last-child {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.st b {
+  order: -1;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--token-blue);
+  border: 4px dashed var(--paper);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 17px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.st.lead b {
+  background: var(--gold);
+  color: var(--paper-text);
+}
+
+.st.neg b {
+  background: var(--token-red);
+  font-size: 15px;
+}

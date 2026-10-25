@@ -1,0 +1,65 @@
+/* Feuille de manches : en-tête avec l'action d'annulation, tableau défilant */
+.ledger-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ledger-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.manches-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+.manches-table th,
+.manches-table td {
+  padding: 8px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--panel-separator);
+  white-space: nowrap;
+}
+
+.manches-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.manches-table th:first-child,
+.manches-table td:first-child {
+  text-align: left;
+  color: var(--text-secondary);
+}
+
+.manches-table td .tot {
+  font-weight: 700;
+}
+
+.manches-table td small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.manches-table td.neg .tot {
+  color: var(--danger);
+}
+
+.empty {
+  padding: 14px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}

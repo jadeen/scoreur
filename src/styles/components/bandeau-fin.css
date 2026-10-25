@@ -1,0 +1,63 @@
+/* Bandeau de fin : vainqueur, classement final, note */
+.bandeau-fin {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.win {
+  background: var(--paper);
+  color: var(--paper-text);
+  border-radius: var(--radius-card);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.win .muted {
+  color: var(--paper-text-secondary);
+}
+
+.win .ph {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 4px dashed var(--paper);
+  box-shadow: 0 0 0 2px var(--gold);
+  box-sizing: border-box;
+}
+
+.win strong {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+}
+
+.rk {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--panel-separator);
+  font-variant-numeric: tabular-nums;
+}
+
+.rk:last-child {
+  border-bottom: 0;
+}
+
+.rk .n {
+  width: 24px;
+  color: var(--text-secondary);
+}
+
+.rk .p {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-weight: 400;
+}

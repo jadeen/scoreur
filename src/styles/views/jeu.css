@@ -1,0 +1,101 @@
+.jeu-ban {
+  height: 140px;
+  border-radius: var(--radius-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.jeu-ban::after {
+  content: "";
+  position: absolute;
+  right: 24px;
+  bottom: -20px;
+  width: 90px;
+  height: 120px;
+  border-radius: 10px;
+  background: var(--paper);
+  transform: rotate(10deg);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 1024px) {
+  .jeu-ban {
+    height: 220px;
+  }
+
+  .jeu-ban::after {
+    right: 48px;
+    bottom: -30px;
+    width: 120px;
+    height: 160px;
+  }
+}
+
+/* Stats par jeu : tableau joueurs/parties/victoires/record, moyenne en plus sur desktop */
+.stats-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-table th,
+.stats-table td {
+  border-bottom: 1px solid var(--panel-separator);
+  padding: 7px 4px;
+  text-align: right;
+}
+
+.stats-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.stats-table th:first-child,
+.stats-table td:first-child {
+  text-align: left;
+}
+
+.stats-table th:last-child,
+.stats-table td:last-child {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .stats-table th:last-child,
+  .stats-table td:last-child {
+    display: table-cell;
+  }
+}
+
+/* Page de jeu : une colonne mobile, deux colonnes desktop */
+.jeu-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.jeu-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .jeu-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .jeu-main {
+    flex: 999 1 560px;
+    min-width: 0;
+  }
+
+  .jeu-side {
+    flex: 1 1 360px;
+    min-width: 0;
+  }
+}
