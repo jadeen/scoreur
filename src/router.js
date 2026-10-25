@@ -62,13 +62,13 @@ export const router = createRouter({
       path: "/mentions-legales",
       name: "mentions-legales",
       component: MentionsLegales,
-      meta: { back: { to: "/", label: "Accueil" } },
+      meta: { back: { to: "/compte", label: "Mon compte" } },
     },
     {
       path: "/confidentialite",
       name: "confidentialite",
       component: Confidentialite,
-      meta: { back: { to: "/", label: "Accueil" } },
+      meta: { back: { to: "/compte", label: "Mon compte" } },
     },
   ],
 });
