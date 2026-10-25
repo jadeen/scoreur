@@ -50,39 +50,37 @@ function winnersSummary(match) {
 </script>
 
 <template>
-  <div>
-    <h1 class="h1">Historique</h1>
+  <h1 class="h1">Historique</h1>
 
-    <div v-if="!user" class="note connect-note">
-      Connecte-toi avec Google pour voir tes parties passées.
-    </div>
+  <div v-if="!user" class="note connect-note">
+    Connecte-toi avec Google pour voir tes parties passées.
+  </div>
 
-    <div v-else class="historique-layout">
-      <p v-if="loading" class="muted state-loading">Chargement des parties…</p>
-      <p v-else-if="loadError" class="muted state-error">
-        Impossible de charger l'historique pour le moment.
-      </p>
-      <p v-else-if="matches.length === 0" class="muted state-empty">
-        Aucune partie enregistrée pour l'instant.
-      </p>
+  <div v-else class="historique-layout">
+    <p v-if="loading" class="muted state-loading">Chargement des parties…</p>
+    <p v-else-if="loadError" class="muted state-error">
+      Impossible de charger l'historique pour le moment.
+    </p>
+    <p v-else-if="matches.length === 0" class="muted state-empty">
+      Aucune partie enregistrée pour l'instant.
+    </p>
 
-      <div v-else class="match-list">
-        <router-link
-          v-for="match in matches"
-          :key="match.id"
-          class="item"
-          :to="{ name: 'partie', params: { id: match.id } }"
-        >
-          <span class="jet" :style="{ background: gameColors[match.games.slug] }"></span>
-          <span class="t">
-            <span class="row">
-              <strong>{{ match.games.name }}</strong>
-              <span class="muted">{{ formatDateShort(match.played_at) }}</span>
-            </span>
-            <span class="muted">{{ playersCountLabel(match) }} · {{ winnersSummary(match) }}</span>
+    <div v-else class="match-list">
+      <router-link
+        v-for="match in matches"
+        :key="match.id"
+        class="item"
+        :to="{ name: 'partie', params: { id: match.id } }"
+      >
+        <span class="jet" :style="{ background: gameColors[match.games.slug] }"></span>
+        <span class="t">
+          <span class="row">
+            <strong>{{ match.games.name }}</strong>
+            <span class="muted">{{ formatDateShort(match.played_at) }}</span>
           </span>
-        </router-link>
-      </div>
+          <span class="muted">{{ playersCountLabel(match) }} · {{ winnersSummary(match) }}</span>
+        </span>
+      </router-link>
     </div>
   </div>
 </template>
