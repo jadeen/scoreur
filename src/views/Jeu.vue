@@ -13,7 +13,31 @@ const loading = ref(true);
 const notFound = ref(false);
 const error = ref(null);
 
+const stats = ref([]);
+const statsLoading = ref(false);
+const statsError = ref(null);
+
 const traitChips = computed(() => [playersLabel(game.value), ...displayTags(game.value)]);
+
+async function loadStats(gameId) {
+  if (!user.value) {
+    stats.value = [];
+    return;
+  }
+  statsLoading.value = true;
+  statsError.value = null;
+  const { data, error: statsFetchError } = await supabase
+    .from("player_game_stats")
+    .select("*")
+    .eq("game_id", gameId)
+    .order("victoires", { ascending: false });
+  if (statsFetchError) {
+    statsError.value = statsFetchError.message;
+  } else {
+    stats.value = data;
+  }
+  statsLoading.value = false;
+}
 
 watch(
   () => props.slug,
@@ -22,6 +46,7 @@ watch(
     error.value = null;
     notFound.value = false;
     game.value = null;
+    stats.value = [];
 
     const { data, error: fetchError } = await supabase
       .from("games")
@@ -36,9 +61,21 @@ watch(
       game.value = data;
     }
     loading.value = false;
+
+    if (game.value) {
+      await loadStats(game.value.id);
+    }
   },
   { immediate: true },
 );
+
+watch(user, () => {
+  if (game.value) {
+    loadStats(game.value.id);
+  } else {
+    stats.value = [];
+  }
+});
 </script>
 
 <template>
@@ -63,8 +100,38 @@ watch(
           <p class="muted">{{ game.scoring_summary }}</p>
         </div>
       </div>
-      <div v-if="!user" class="jeu-side">
-        <div class="note">
+      <div class="jeu-side">
+        <template v-if="user">
+          <span class="label">Mes stats</span>
+          <p v-if="statsLoading" class="muted">Chargement…</p>
+          <p v-else-if="statsError" class="muted">
+            Impossible de charger les statistiques pour le moment.
+          </p>
+          <p v-else-if="stats.length === 0" class="muted">
+            Aucune partie enregistrée pour ce jeu pour l'instant.
+          </p>
+          <table v-else class="stats-table">
+            <thead>
+              <tr>
+                <th>Joueur</th>
+                <th>Parties</th>
+                <th>Victoires</th>
+                <th>Record</th>
+                <th>Moyenne</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in stats" :key="row.player_id">
+                <td>{{ row.player_name }}</td>
+                <td>{{ row.parties }}</td>
+                <td>{{ row.victoires }}</td>
+                <td>{{ row.record }}</td>
+                <td>{{ row.moyenne }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </template>
+        <div v-else class="note">
           Connecte-toi pour enregistrer une partie de {{ game.name }} et suivre tes statistiques.
         </div>
       </div>
