@@ -44,12 +44,17 @@ function makeMatchDetail(overrides = {}) {
   };
 }
 
+let wrapper;
+
 function mountPartie(id = "42") {
-  return mount(Partie, { props: { id }, global: { plugins: [router] } });
+  wrapper = mount(Partie, { props: { id }, global: { plugins: [router] } });
+  return wrapper;
 }
 
 describe("Partie", () => {
   afterEach(() => {
+    wrapper?.unmount();
+    wrapper = undefined;
     vi.clearAllMocks();
     user.value = null;
   });
@@ -180,6 +185,34 @@ describe("Partie", () => {
     expect(wrapper.find(".muted.empty").exists()).toBe(false);
     expect(wrapper.text()).toContain(
       "Feuille redessinée à partir du détail archivé (format wizard-v1), en lecture seule.",
+    );
+  });
+
+  it("affiche la feuille de manches Odin reconstituée depuis le détail archivé", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockMatchTable({
+      select: {
+        data: makeMatchDetail({
+          games: { name: "Odin", lower_wins: true },
+          details_format: "odin-v1",
+          details: { joueurs: [1, 2], seuil: 15, manches: [[0, 4]] },
+          match_players: [
+            { score: 0, players: { id: 1, name: "Léa" } },
+            { score: 4, players: { id: 2, name: "Hugo" } },
+          ],
+        }),
+        error: null,
+      },
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+
+    expect(wrapper.find(".h2").text()).toBe("Feuille de score");
+    const headers = wrapper.findAll("th");
+    expect(headers.map((th) => th.text())).toEqual(["Manche", "Léa", "Hugo"]);
+    expect(wrapper.find("tbody td .tot").text()).toBe("0");
+    expect(wrapper.text()).toContain(
+      "Feuille redessinée à partir du détail archivé (format odin-v1), en lecture seule.",
     );
   });
 
