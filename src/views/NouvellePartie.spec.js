@@ -1,5 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import FeuilleOdin from "../components/FeuilleOdin.vue";
 import FeuilleWizard from "../components/FeuilleWizard.vue";
 import { loadDraft, saveDraft } from "../lib/draft";
 import { user } from "../lib/auth";
@@ -75,12 +76,17 @@ function mockTables({
   });
 }
 
+let wrapper;
+
 function mountPartie(props = { slug: "wizard" }) {
-  return mount(NouvellePartie, { props, global: { plugins: [router] } });
+  wrapper = mount(NouvellePartie, { props, global: { plugins: [router] } });
+  return wrapper;
 }
 
 describe("NouvellePartie", () => {
   afterEach(() => {
+    wrapper?.unmount();
+    wrapper = undefined;
     vi.clearAllMocks();
     user.value = null;
     localStorage.clear();
@@ -482,7 +488,7 @@ describe("NouvellePartie", () => {
     await wrapper.findAll(".pl input")[2].trigger("change");
     await wrapper.find(".btn.primary").trigger("click");
 
-    expect(wrapper.find(".feuille-step").classes()).toContain("feuille-step--wizard");
+    expect(wrapper.find(".feuille-step").classes()).toContain("feuille-step--dedie");
     expect(wrapper.findComponent(FeuilleWizard).exists()).toBe(true);
     expect(wrapper.text()).not.toContain("Terminer la partie");
   });
@@ -587,5 +593,146 @@ describe("NouvellePartie", () => {
     expect(feuille.exists()).toBe(true);
     expect(feuille.props("initialDetails")).toEqual(wizardDetails);
     expect(feuille.props("variant")).toBe(true);
+  });
+
+  it("affiche les options Odin à la configuration, avec le seuil par défaut", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "odin-v1", players_min: 2, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    const targetInput = wrapper.find(".target-field input");
+    expect(targetInput.element.value).toBe("15");
+
+    await targetInput.setValue("20");
+    await targetInput.trigger("change");
+    expect(targetInput.element.value).toBe("20");
+  });
+
+  it("ignore une valeur de seuil hors bornes et retombe sur une valeur valide", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "odin-v1", players_min: 2, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    const targetInput = wrapper.find(".target-field input");
+    await targetInput.setValue("1");
+    await targetInput.trigger("change");
+    expect(targetInput.element.value).toBe("5");
+
+    await targetInput.setValue("500");
+    await targetInput.trigger("change");
+    expect(targetInput.element.value).toBe("200");
+
+    await targetInput.setValue("");
+    await targetInput.trigger("change");
+    expect(targetInput.element.value).toBe("15");
+  });
+
+  it("démarre une partie Odin et affiche la feuille dédiée", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "odin-v1", players_min: 2, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    await wrapper.findAll(".pl input")[1].trigger("change");
+    await wrapper.find(".btn.primary").trigger("click");
+
+    expect(wrapper.find(".feuille-step").classes()).toContain("feuille-step--dedie");
+    expect(wrapper.findComponent(FeuilleOdin).exists()).toBe(true);
+    expect(wrapper.text()).not.toContain("Terminer la partie");
+  });
+
+  it("enregistre une partie Odin avec le détail en odin-v1 une fois la feuille terminée", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "odin-v1", players_min: 2, players_max: 6 }),
+      players: makePlayers(),
+    });
+    supabase.rpc.mockResolvedValue({ error: null });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    await wrapper.findAll(".pl input")[1].trigger("change");
+    await wrapper.find(".btn.primary").trigger("click");
+
+    const feuille = wrapper.findComponent(FeuilleOdin);
+    const odinDetails = { joueurs: [3, 1], seuil: 15, manches: [[0, 4]] };
+    feuille.vm.$emit("update:scores", { 3: 0, 1: 4 });
+    feuille.vm.$emit("update:details", odinDetails);
+    feuille.vm.$emit("fin");
+    await flushPromises();
+
+    expect(wrapper.find(".fin-step").exists()).toBe(true);
+
+    await wrapper.find(".bandeau-fin .btn.primary").trigger("click");
+    await flushPromises();
+
+    expect(supabase.rpc).toHaveBeenCalledWith("save_match", {
+      p_game_id: 10,
+      p_players: expect.arrayContaining([
+        expect.objectContaining({ player_id: 3, score: 0 }),
+        expect.objectContaining({ player_id: 1, score: 4 }),
+      ]),
+      p_notes: null,
+      p_details: odinDetails,
+      p_details_format: "odin-v1",
+    });
+  });
+
+  it("reprend un brouillon Odin avec ses manches et son seuil", async () => {
+    user.value = { email: "lea@example.fr" };
+    const odinDetails = { joueurs: [3], seuil: 30, manches: [[2]] };
+    saveDraft("wizard", { playerIds: [3], scores: { 3: 2 }, details: odinDetails });
+    mockTables({
+      game: makeGame({ sheet: "odin-v1", players_min: 2, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    const feuille = wrapper.findComponent(FeuilleOdin);
+    expect(feuille.exists()).toBe(true);
+    expect(feuille.props("initialDetails")).toEqual(odinDetails);
+    expect(feuille.props("target")).toBe(30);
+  });
+
+  it("abandonne une partie Odin en cours : efface le brouillon et revient à la page du jeu", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "odin-v1", players_min: 2, players_max: 6 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await router.push("/jeu/wizard/partie");
+    await flushPromises();
+    await flushPromises();
+
+    await wrapper.findAll(".pl input")[1].trigger("change");
+    await wrapper.find(".btn.primary").trigger("click");
+
+    const abandonButton = wrapper
+      .findAll(".feuille-step .btn")
+      .find((btn) => btn.text() === "Abandonner la partie");
+    await abandonButton.trigger("click");
+    await flushPromises();
+
+    expect(supabase.rpc).not.toHaveBeenCalled();
+    expect(loadDraft("wizard")).toBeNull();
+    expect(router.currentRoute.value.path).toBe("/jeu/wizard");
   });
 });
