@@ -155,39 +155,41 @@ watch(
     <p class="muted">
       Notez chaque partie, voyez qui gagne le plus, et revoyez toutes les feuilles de score.
     </p>
-    <button class="btn primary" type="button" @click="signInWithGoogle">
+    <button class="btn primary accueil-connect-btn" type="button" @click="signInWithGoogle">
       Se connecter avec Google
     </button>
     <p class="muted">Seul celui qui tient le carnet a besoin d'un compte.</p>
 
-    <div class="row">
-      <span class="label">Jeux disponibles</span>
-      <router-link to="/jeux">Tout voir</router-link>
-    </div>
-    <p v-if="featuredLoading" class="muted state-loading">Chargement…</p>
-    <p v-else-if="featuredError" class="muted state-error">
-      Impossible de charger le catalogue pour le moment.
-    </p>
-    <div v-else class="accueil-games">
-      <router-link
-        v-for="game in featuredGames"
-        :key="game.slug"
-        class="box"
-        :to="{ name: 'jeu', params: { slug: game.slug } }"
-      >
-        <div
-          class="ph accueil-game-thumb"
-          :style="{ background: game.color }"
-          aria-hidden="true"
-        ></div>
-        <strong>{{ game.name }}</strong>
-        <span class="tag">{{ playersLabel(game) }}</span>
-      </router-link>
-      <router-link class="box" to="/jeux">
-        <div class="ph accueil-game-thumb" aria-hidden="true"></div>
-        <strong>Autres jeux</strong>
-        <span class="tag">feuille simple</span>
-      </router-link>
+    <div class="accueil-games-section">
+      <div class="row">
+        <span class="label">Jeux disponibles</span>
+        <router-link to="/jeux">Tout voir</router-link>
+      </div>
+      <p v-if="featuredLoading" class="muted state-loading">Chargement…</p>
+      <p v-else-if="featuredError" class="muted state-error">
+        Impossible de charger le catalogue pour le moment.
+      </p>
+      <div v-else class="accueil-games">
+        <router-link
+          v-for="game in featuredGames"
+          :key="game.slug"
+          class="box"
+          :to="{ name: 'jeu', params: { slug: game.slug } }"
+        >
+          <div
+            class="ph accueil-game-thumb"
+            :style="{ background: game.color }"
+            aria-hidden="true"
+          ></div>
+          <strong>{{ game.name }}</strong>
+          <span class="tag">{{ playersLabel(game) }}</span>
+        </router-link>
+        <router-link class="box" to="/jeux">
+          <div class="ph accueil-game-thumb" aria-hidden="true"></div>
+          <strong>Autres jeux</strong>
+          <span class="tag">feuille simple</span>
+        </router-link>
+      </div>
     </div>
 
     <div class="note">
