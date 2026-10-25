@@ -3,9 +3,11 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import BandeauFin from "../components/BandeauFin.vue";
 import Classement from "../components/Classement.vue";
+import FeuilleBingo from "../components/FeuilleBingo.vue";
 import FeuilleOdin from "../components/FeuilleOdin.vue";
 import FeuilleWizard from "../components/FeuilleWizard.vue";
 import Stepper from "../components/Stepper.vue";
+import { bingoCardIssues, bingoScore, emptyCard } from "../lib/bingoScoring";
 import { user } from "../lib/auth";
 import { clearDraft, loadDraft, saveDraft } from "../lib/draft";
 import { ODIN_DEFAULT_TARGET, ODIN_MAX_TARGET, ODIN_MIN_TARGET } from "../lib/odinScoring";
@@ -33,10 +35,14 @@ const selected = ref([]);
 const scores = reactive({});
 const variant = ref(false);
 const target = ref(ODIN_DEFAULT_TARGET);
+const card = ref(emptyCard());
 const details = ref(null);
 
 const isWizard = computed(() => game.value?.sheet === "wizard-v1");
 const isOdin = computed(() => game.value?.sheet === "odin-v1");
+const isBingo = computed(() => game.value?.sheet === "bingo-v1");
+
+const cardIssues = computed(() => bingoCardIssues(card.value));
 
 const newName = ref("");
 const addError = ref(null);
@@ -74,6 +80,7 @@ function restoreDraft() {
     details.value = draft.details;
     variant.value = Boolean(draft.details.variante_pas_egal);
     if (draft.details.seuil) target.value = draft.details.seuil;
+    if (draft.details.carton) card.value = draft.details.carton;
   }
   step.value = "feuille";
   return true;
@@ -139,8 +146,11 @@ const canStart = computed(
   () =>
     game.value &&
     selected.value.length >= game.value.players_min &&
-    selected.value.length <= game.value.players_max,
+    selected.value.length <= game.value.players_max &&
+    (!isBingo.value || cardIssues.value.length === 0),
 );
+
+const canSave = computed(() => !isBingo.value || bingoScore(details.value.gagne) > 0);
 
 function persistDraft() {
   saveDraft(props.slug, {
@@ -158,6 +168,11 @@ function setTarget(value) {
     ODIN_MAX_TARGET,
     Math.max(ODIN_MIN_TARGET, Number(value) || ODIN_DEFAULT_TARGET),
   );
+}
+
+function setCardCell(r, c, value) {
+  const n = value === "" ? null : Math.min(90, Math.max(1, Number(value)));
+  card.value[r][c] = n;
 }
 
 function onSheetScores(sheetScores) {
@@ -294,6 +309,26 @@ function onAbandon() {
           </p>
         </div>
 
+        <div v-if="isBingo" class="box">
+          <h2 class="h2">Carton</h2>
+          <p class="muted">Saisis les 15 numéros de ton carton (5 par ligne, de 1 à 90).</p>
+          <div class="carton-setup">
+            <div v-for="(row, r) in card" :key="r" class="carton-setup-row">
+              <input
+                v-for="(cell, c) in row"
+                :key="c"
+                type="number"
+                min="1"
+                max="90"
+                :value="cell ?? ''"
+                :aria-label="`Case ${r + 1}-${c + 1}`"
+                @change="setCardCell(r, c, $event.target.value)"
+              />
+            </div>
+          </div>
+          <p v-for="issue in cardIssues" :key="issue" class="muted error-add">{{ issue }}</p>
+        </div>
+
         <p v-if="!canStart" class="muted hint-count">
           {{ playersLabel(game) }} nécessaires pour commencer.
         </p>
@@ -305,9 +340,9 @@ function onAbandon() {
       <div
         v-else-if="step === 'feuille'"
         class="feuille-step"
-        :class="{ 'feuille-step--dedie': isWizard || isOdin }"
+        :class="{ 'feuille-step--dedie': isWizard || isOdin, 'feuille-step--bingo': isBingo }"
       >
-        <Classement :players="feuillePlayers" :lower-wins="game.lower_wins" />
+        <Classement v-if="!isBingo" :players="feuillePlayers" :lower-wins="game.lower_wins" />
 
         <template v-if="isWizard">
           <FeuilleWizard
@@ -325,6 +360,18 @@ function onAbandon() {
           <FeuilleOdin
             :players="feuillePlayers"
             :target="target"
+            :initial-details="details"
+            @update:scores="onSheetScores"
+            @update:details="onSheetDetails"
+            @fin="step = 'fin'"
+          />
+          <button class="btn" type="button" @click="onAbandon">Abandonner la partie</button>
+        </template>
+
+        <template v-else-if="isBingo">
+          <FeuilleBingo
+            :players="feuillePlayers"
+            :card="card"
             :initial-details="details"
             @update:scores="onSheetScores"
             @update:details="onSheetDetails"
@@ -353,6 +400,7 @@ function onAbandon() {
           :players="feuillePlayers"
           :lower-wins="game.lower_wins"
           :saving="saving"
+          :can-save="canSave"
           @save="onSave"
           @abandon="onAbandon"
         />
