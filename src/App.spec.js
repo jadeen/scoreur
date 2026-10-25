@@ -1,20 +1,19 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App.vue";
-import { signInWithGoogle, signOut, user } from "./lib/auth";
+import { signInWithGoogle, user } from "./lib/auth";
 import { router } from "./router";
 
 vi.mock("./lib/auth", async (importOriginal) => {
   const { ref } = await import("vue");
   const actual = await importOriginal();
-  return { ...actual, user: ref(null), signInWithGoogle: vi.fn(), signOut: vi.fn() };
+  return { ...actual, user: ref(null), signInWithGoogle: vi.fn() };
 });
 
 describe("App", () => {
   beforeEach(async () => {
     user.value = null;
     signInWithGoogle.mockClear();
-    signOut.mockClear();
     await router.push("/");
     await router.isReady();
   });
@@ -104,21 +103,28 @@ describe("App", () => {
     expect(signInWithGoogle).toHaveBeenCalledTimes(2);
   });
 
-  it("affiche le nom et l'avatar une fois connecté, mobile et desktop", async () => {
+  it("affiche l'avatar lié à Mon compte une fois connecté, mobile et desktop", async () => {
     user.value = { email: "lea@example.fr", user_metadata: { full_name: "Léa Martin" } };
     const wrapper = mount(App, { global: { plugins: [router] } });
     await router.isReady();
 
     const topbarWho = wrapper.find(".topbar .who");
     expect(topbarWho.find(".avatar").text()).toBe("L");
-    expect(topbarWho.find(".who__name").text()).toBe("Léa Martin");
+    expect(topbarWho.attributes("href")).toBe("#/compte");
 
     const navWho = wrapper.find(".desktop-nav .who");
     expect(navWho.find(".avatar").text()).toBe("L");
-    expect(navWho.find(".who__name").text()).toBe("Léa Martin");
+    expect(navWho.attributes("href")).toBe("#/compte");
+  });
 
-    await topbarWho.find(".link-btn").trigger("click");
-    await navWho.find(".link-btn").trigger("click");
-    expect(signOut).toHaveBeenCalledTimes(2);
+  it("affiche les liens de mentions légales et confidentialité en pied de page", async () => {
+    const wrapper = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+
+    const links = wrapper.findAll(".footer a");
+    expect(links.map((link) => link.text())).toEqual([
+      "Mentions légales",
+      "Politique de confidentialité",
+    ]);
   });
 });

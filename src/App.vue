@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { signInWithGoogle, signOut, user, userDisplayName } from "./lib/auth";
+import { signInWithGoogle, user, userDisplayName } from "./lib/auth";
 
 const route = useRoute();
 </script>
@@ -16,13 +16,11 @@ const route = useRoute();
     </div>
     <div v-else class="topbar">
       <router-link class="logo" to="/">Scoreur</router-link>
-      <div v-if="user" class="who">
+      <router-link v-if="user" class="who" to="/compte" aria-label="Mon compte">
         <span class="avatar" aria-hidden="true">{{
           userDisplayName(user).charAt(0).toUpperCase()
         }}</span>
-        <span class="who__name">{{ userDisplayName(user) }}</span>
-        <button class="link-btn" type="button" @click="signOut">Se déconnecter</button>
-      </div>
+      </router-link>
       <button v-else class="btn sm" type="button" @click="signInWithGoogle">Se connecter</button>
     </div>
     <nav class="desktop-nav">
@@ -34,13 +32,11 @@ const route = useRoute();
         <router-link class="link" active-class="on" to="/historique">Historique</router-link>
         <a class="link" href="#">Proposer un jeu</a>
         <span class="desktop-nav__spacer"></span>
-        <div v-if="user" class="who">
+        <router-link v-if="user" class="who" to="/compte" aria-label="Mon compte">
           <span class="avatar" aria-hidden="true">{{
             userDisplayName(user).charAt(0).toUpperCase()
           }}</span>
-          <span class="who__name">{{ userDisplayName(user) }}</span>
-          <button class="link-btn" type="button" @click="signOut">Se déconnecter</button>
-        </div>
+        </router-link>
         <button v-else class="btn sm" type="button" @click="signInWithGoogle">Se connecter</button>
       </div>
     </nav>
@@ -50,5 +46,9 @@ const route = useRoute();
       >
       <router-view />
     </main>
+    <footer class="footer">
+      <router-link to="/mentions-legales">Mentions légales</router-link>
+      <router-link to="/confidentialite">Politique de confidentialité</router-link>
+    </footer>
   </div>
 </template>
