@@ -1,5 +1,6 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import FeuilleBingo from "../components/FeuilleBingo.vue";
 import FeuilleOdin from "../components/FeuilleOdin.vue";
 import FeuilleWizard from "../components/FeuilleWizard.vue";
 import { loadDraft, saveDraft } from "../lib/draft";
@@ -723,6 +724,178 @@ describe("NouvellePartie", () => {
     await flushPromises();
 
     await wrapper.findAll(".pl input")[1].trigger("change");
+    await wrapper.find(".btn.primary").trigger("click");
+
+    const abandonButton = wrapper
+      .findAll(".feuille-step .btn")
+      .find((btn) => btn.text() === "Abandonner la partie");
+    await abandonButton.trigger("click");
+    await flushPromises();
+
+    expect(supabase.rpc).not.toHaveBeenCalled();
+    expect(loadDraft("wizard")).toBeNull();
+    expect(router.currentRoute.value.path).toBe("/jeu/wizard");
+  });
+
+  const VALID_CARD = [
+    [8, 0, 20, 0, 0, 56, 0, 72, 82],
+    [0, 15, 0, 34, 49, 0, 63, 77, 0],
+    [0, 0, 28, 35, 0, 59, 68, 0, 89],
+  ];
+
+  async function fillCard(wrapper) {
+    const inputs = wrapper.findAll(".carton-setup input");
+    for (const [index, input] of inputs.entries()) {
+      const r = Math.floor(index / 9);
+      const c = index % 9;
+      const value = VALID_CARD[r][c];
+      if (value) {
+        await input.setValue(String(value));
+        await input.trigger("change");
+      }
+    }
+  }
+
+  it("bloque « Commencer la partie » tant que le carton Bingo n'est pas valide", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "bingo-v1", players_min: 1, players_max: 1 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    expect(wrapper.findAll(".carton-setup input")).toHaveLength(27);
+    expect(wrapper.find(".btn.primary").attributes("disabled")).toBeDefined();
+    expect(wrapper.find(".error-add").text()).toContain("La ligne 1 doit avoir 5 numéros");
+
+    await fillCard(wrapper);
+    expect(wrapper.find(".error-add").exists()).toBe(false);
+    expect(wrapper.find(".btn.primary").attributes("disabled")).toBeUndefined();
+
+    const firstInput = wrapper.findAll(".carton-setup input")[0];
+    await firstInput.setValue("");
+    await firstInput.trigger("change");
+    expect(wrapper.find(".error-add").text()).toContain("La ligne 1 doit avoir 5 numéros");
+  });
+
+  it("démarre une partie Bingo et affiche la feuille dédiée, sans classement", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "bingo-v1", players_min: 1, players_max: 1 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    await fillCard(wrapper);
+    await wrapper.find(".btn.primary").trigger("click");
+
+    expect(wrapper.findComponent(FeuilleBingo).exists()).toBe(true);
+    expect(wrapper.find(".classement").exists()).toBe(false);
+  });
+
+  it("n'autorise pas l'enregistrement d'une partie Bingo sans palier gagné", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "bingo-v1", players_min: 1, players_max: 1 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    await fillCard(wrapper);
+    await wrapper.find(".btn.primary").trigger("click");
+
+    const feuille = wrapper.findComponent(FeuilleBingo);
+    feuille.vm.$emit("update:scores", { 3: 0 });
+    feuille.vm.$emit("update:details", {
+      carton: VALID_CARD,
+      tirage: [],
+      gagne: { quine: false, double_quine: false, carton_plein: false },
+    });
+    feuille.vm.$emit("fin");
+    await flushPromises();
+
+    expect(wrapper.find(".bandeau-fin .btn.primary").attributes("disabled")).toBeDefined();
+    expect(wrapper.text()).toContain("Seules les parties gagnées sont enregistrées.");
+  });
+
+  it("enregistre une partie Bingo gagnée avec le détail en bingo-v1", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "bingo-v1", players_min: 1, players_max: 1 }),
+      players: makePlayers(),
+    });
+    supabase.rpc.mockResolvedValue({ error: null });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    await fillCard(wrapper);
+    await wrapper.find(".btn.primary").trigger("click");
+
+    const feuille = wrapper.findComponent(FeuilleBingo);
+    const bingoDetails = {
+      carton: VALID_CARD,
+      tirage: [8, 20, 56, 72, 82],
+      gagne: { quine: true, double_quine: false, carton_plein: false },
+    };
+    feuille.vm.$emit("update:scores", { 3: 1 });
+    feuille.vm.$emit("update:details", bingoDetails);
+    feuille.vm.$emit("fin");
+    await flushPromises();
+
+    expect(wrapper.find(".bandeau-fin .btn.primary").attributes("disabled")).toBeUndefined();
+    await wrapper.find(".bandeau-fin .btn.primary").trigger("click");
+    await flushPromises();
+
+    expect(supabase.rpc).toHaveBeenCalledWith("save_match", {
+      p_game_id: 10,
+      p_players: expect.arrayContaining([expect.objectContaining({ player_id: 3, score: 1 })]),
+      p_notes: null,
+      p_details: bingoDetails,
+      p_details_format: "bingo-v1",
+    });
+  });
+
+  it("reprend un brouillon Bingo avec son carton, son tirage et ses paliers", async () => {
+    user.value = { email: "lea@example.fr" };
+    const bingoDetails = {
+      carton: VALID_CARD,
+      tirage: [8],
+      gagne: { quine: false, double_quine: false, carton_plein: false },
+    };
+    saveDraft("wizard", { playerIds: [3], scores: { 3: 0 }, details: bingoDetails });
+    mockTables({
+      game: makeGame({ sheet: "bingo-v1", players_min: 1, players_max: 1 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await flushPromises();
+    await flushPromises();
+
+    const feuille = wrapper.findComponent(FeuilleBingo);
+    expect(feuille.exists()).toBe(true);
+    expect(feuille.props("initialDetails")).toEqual(bingoDetails);
+    expect(feuille.props("card")).toEqual(VALID_CARD);
+  });
+
+  it("abandonne une partie Bingo en cours : efface le brouillon et revient à la page du jeu", async () => {
+    user.value = { email: "lea@example.fr" };
+    mockTables({
+      game: makeGame({ sheet: "bingo-v1", players_min: 1, players_max: 1 }),
+      players: makePlayers(),
+    });
+    const wrapper = mountPartie();
+    await router.push("/jeu/wizard/partie");
+    await flushPromises();
+    await flushPromises();
+
+    await fillCard(wrapper);
     await wrapper.find(".btn.primary").trigger("click");
 
     const abandonButton = wrapper

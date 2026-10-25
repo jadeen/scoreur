@@ -6,6 +6,7 @@ const props = defineProps({
   players: { type: Array, required: true },
   lowerWins: { type: Boolean, default: false },
   saving: { type: Boolean, default: false },
+  canSave: { type: Boolean, default: true },
 });
 const emit = defineEmits(["save", "abandon"]);
 
@@ -43,9 +44,15 @@ const notes = ref("");
       ></textarea>
     </label>
 
-    <button class="btn primary" type="button" :disabled="saving" @click="emit('save', notes)">
+    <button
+      class="btn primary"
+      type="button"
+      :disabled="saving || !canSave"
+      @click="emit('save', notes)"
+    >
       {{ saving ? "Enregistrement…" : "Enregistrer la partie" }}
     </button>
+    <p v-if="!canSave" class="muted">Seules les parties gagnées sont enregistrées.</p>
     <button class="btn" type="button" :disabled="saving" @click="emit('abandon')">
       Abandonner sans enregistrer
     </button>

@@ -76,4 +76,11 @@ describe("BandeauFin", () => {
     expect(buttons[0].attributes("disabled")).toBeDefined();
     expect(buttons[1].attributes("disabled")).toBeDefined();
   });
+
+  it("désactive l'enregistrement et explique pourquoi quand canSave est faux", () => {
+    const wrapper = mount(BandeauFin, { props: { players: makePlayers(), canSave: false } });
+
+    expect(wrapper.find(".btn.primary").attributes("disabled")).toBeDefined();
+    expect(wrapper.text()).toContain("Seules les parties gagnées sont enregistrées.");
+  });
 });
