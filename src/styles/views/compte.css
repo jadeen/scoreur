@@ -1,4 +1,8 @@
 /* Mon compte : qui, raccourcis, suppression du compte */
+.alpha-account-note {
+  margin: 12px 0;
+}
+
 .compte-layout {
   display: flex;
   flex-direction: column;

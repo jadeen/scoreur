@@ -28,6 +28,10 @@ async function deleteAccount() {
   <div>
     <h1 class="h1">Mon compte</h1>
 
+    <div class="note alpha-account-note">
+      Version alpha : ton carnet (joueurs, parties) sera remis à zéro au passage en version 1.0.
+    </div>
+
     <div v-if="!user" class="note connect-note">
       Connecte-toi avec Google pour gérer ton compte.
     </div>

@@ -37,8 +37,21 @@ describe("Compte", () => {
   it("invite à se connecter quand personne n'est connecté", () => {
     mountCompte();
 
-    expect(wrapper.find(".note").text()).toBe("Connecte-toi avec Google pour gérer ton compte.");
+    expect(wrapper.find(".connect-note").text()).toBe(
+      "Connecte-toi avec Google pour gérer ton compte.",
+    );
     expect(wrapper.find(".who").exists()).toBe(false);
+  });
+
+  it("rappelle que les données seront remises à zéro à la version 1.0, connecté ou non", () => {
+    mountCompte();
+    expect(wrapper.find(".alpha-account-note").text()).toBe(
+      "Version alpha : ton carnet (joueurs, parties) sera remis à zéro au passage en version 1.0.",
+    );
+
+    user.value = { email: "lea@example.fr" };
+    mountCompte();
+    expect(wrapper.find(".alpha-account-note").exists()).toBe(true);
   });
 
   it("affiche l'identité du compte connecté", () => {

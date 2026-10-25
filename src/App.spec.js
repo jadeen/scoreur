@@ -14,6 +14,7 @@ describe("App", () => {
   beforeEach(async () => {
     user.value = null;
     signInWithGoogle.mockClear();
+    localStorage.clear();
     await router.push("/");
     await router.isReady();
   });
@@ -115,6 +116,20 @@ describe("App", () => {
     const navWho = wrapper.find(".desktop-nav .who");
     expect(navWho.find(".avatar").text()).toBe("L");
     expect(navWho.attributes("href")).toBe("#/compte");
+  });
+
+  it("affiche le bandeau alpha et le masque durablement au clic sur fermer", async () => {
+    const wrapper = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+
+    expect(wrapper.find(".alpha-banner").text()).toContain("Version alpha");
+
+    await wrapper.find(".alpha-banner__close").trigger("click");
+    expect(wrapper.find(".alpha-banner").exists()).toBe(false);
+
+    const reloaded = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+    expect(reloaded.find(".alpha-banner").exists()).toBe(false);
   });
 
   it("affiche les liens de mentions légales et confidentialité en pied de page", async () => {
