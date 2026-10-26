@@ -11,7 +11,7 @@ import NouvellePartie from "./NouvellePartie.vue";
 
 vi.mock("../lib/auth", async () => {
   const { ref } = await import("vue");
-  return { user: ref(null) };
+  return { user: ref(null), signInWithGoogle: vi.fn() };
 });
 
 vi.mock("../lib/supabase", () => ({
@@ -98,7 +98,8 @@ describe("NouvellePartie", () => {
     const wrapper = mountPartie();
     await flushPromises();
 
-    expect(wrapper.find(".note").text()).toBe(
+    expect(wrapper.find("h1.h1").text()).toBe("Partie privée");
+    expect(wrapper.find(".introuvable__message").text()).toBe(
       "Connecte-toi avec Google pour enregistrer une partie.",
     );
   });
@@ -446,9 +447,7 @@ describe("NouvellePartie", () => {
     user.value = null;
     await flushPromises();
 
-    expect(wrapper.find(".note").text()).toBe(
-      "Connecte-toi avec Google pour enregistrer une partie.",
-    );
+    expect(wrapper.find("h1.h1").text()).toBe("Partie privée");
   });
 
   it("affiche les options Wizard à la configuration", async () => {

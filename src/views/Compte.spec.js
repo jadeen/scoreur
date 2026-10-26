@@ -11,6 +11,7 @@ vi.mock("../lib/auth", async () => {
     user: ref(null),
     userDisplayName: (u) => u?.user_metadata?.full_name ?? u?.email ?? "",
     signOut: vi.fn(),
+    signInWithGoogle: vi.fn(),
   };
 });
 
@@ -37,7 +38,8 @@ describe("Compte", () => {
   it("invite à se connecter quand personne n'est connecté", () => {
     mountCompte();
 
-    expect(wrapper.find(".connect-note").text()).toBe(
+    expect(wrapper.find("h1.h1").text()).toBe("Compte privé");
+    expect(wrapper.find(".introuvable__message").text()).toBe(
       "Connecte-toi avec Google pour gérer ton compte.",
     );
     expect(wrapper.find(".who").exists()).toBe(false);

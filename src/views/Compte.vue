@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import ConnexionRequise from "../components/ConnexionRequise.vue";
 import { signOut, user, userDisplayName } from "../lib/auth";
 import { supabase } from "../lib/supabase";
 
@@ -25,18 +26,20 @@ async function deleteAccount() {
 </script>
 
 <template>
-  <div>
+  <div class="note alpha-account-note">
+    Version alpha : ton carnet (joueurs, parties) sera remis à zéro au passage en version 1.0.
+  </div>
+
+  <ConnexionRequise
+    v-if="!user"
+    title="Compte privé"
+    message="Connecte-toi avec Google pour gérer ton compte."
+  />
+
+  <template v-else>
     <h1 class="h1">Mon compte</h1>
 
-    <div class="note alpha-account-note">
-      Version alpha : ton carnet (joueurs, parties) sera remis à zéro au passage en version 1.0.
-    </div>
-
-    <div v-if="!user" class="note connect-note">
-      Connecte-toi avec Google pour gérer ton compte.
-    </div>
-
-    <div v-else class="compte-layout">
+    <div class="compte-layout">
       <div class="who">
         <span class="avatar" aria-hidden="true">{{
           userDisplayName(user).charAt(0).toUpperCase()
@@ -91,5 +94,5 @@ async function deleteAccount() {
         </div>
       </div>
     </div>
-  </div>
+  </template>
 </template>

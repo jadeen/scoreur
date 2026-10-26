@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import BandeauFin from "../components/BandeauFin.vue";
 import Classement from "../components/Classement.vue";
+import ConnexionRequise from "../components/ConnexionRequise.vue";
 import FeuilleBingo from "../components/FeuilleBingo.vue";
 import FeuilleOdin from "../components/FeuilleOdin.vue";
 import FeuilleWizard from "../components/FeuilleWizard.vue";
@@ -229,9 +230,11 @@ function onAbandon() {
   <div>
     <p v-if="gameLoading" class="muted">Chargement…</p>
     <p v-else-if="gameNotFound" class="muted">Ce jeu n'existe pas.</p>
-    <div v-else-if="!user" class="note connect-note">
-      Connecte-toi avec Google pour enregistrer une partie.
-    </div>
+    <ConnexionRequise
+      v-else-if="!user"
+      title="Partie privée"
+      message="Connecte-toi avec Google pour enregistrer une partie."
+    />
     <p v-else-if="playersLoading" class="muted">Chargement du carnet…</p>
     <p v-else-if="playersError" class="muted">Impossible de charger ton carnet pour le moment.</p>
 
