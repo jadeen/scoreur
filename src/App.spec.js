@@ -24,7 +24,7 @@ describe("App", () => {
     await router.isReady();
 
     const topbar = wrapper.find(".topbar");
-    expect(topbar.find(".logo").text()).toBe("Scoreur");
+    expect(topbar.find(".logo img").attributes("alt")).toBe("Scoreur");
     expect(topbar.find(".btn").text()).toBe("Se connecter");
   });
 
@@ -82,7 +82,7 @@ describe("App", () => {
 
     const topbar = wrapper.find(".topbar--back");
     expect(topbar.find(".back-link").text()).toBe("‹ Accueil");
-    expect(topbar.find(".logo").text()).toBe("Scoreur");
+    expect(topbar.find(".logo img").attributes("alt")).toBe("Scoreur");
     expect(wrapper.findAll(".topbar")).toHaveLength(1);
   });
 

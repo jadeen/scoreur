@@ -11,7 +11,7 @@ describe("main", () => {
     const { router } = await import("./router.js");
     await router.isReady();
 
-    expect(document.querySelector("#app .logo")?.textContent).toBe("Scoreur");
+    expect(document.querySelector("#app .logo img")?.getAttribute("alt")).toBe("Scoreur");
     expect(document.querySelector("#app h1.h1")?.textContent).toBe(
       "Le carnet de scores de vos soirées jeux",
     );
