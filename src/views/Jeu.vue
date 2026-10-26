@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref, watch } from "vue";
+import Introuvable from "../components/Introuvable.vue";
 import { user } from "../lib/auth";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
@@ -82,7 +83,16 @@ watch(user, () => {
   <div>
     <p v-if="loading" class="muted">Chargement…</p>
     <p v-else-if="error" class="muted">Impossible de charger ce jeu pour le moment.</p>
-    <p v-else-if="notFound" class="muted">Ce jeu n'existe pas.</p>
+    <Introuvable
+      v-else-if="notFound"
+      eyebrow="Jeu introuvable"
+      title="Pas dans la boîte"
+      :message="`Aucun jeu du catalogue ne correspond à « ${slug} ». Il a peut-être changé de nom.`"
+      primary-label="Voir tous les jeux"
+      primary-to="/jeux"
+      secondary-label="Retour à l'accueil"
+      secondary-to="/"
+    />
 
     <div v-else class="jeu-layout">
       <div class="jeu-main">

@@ -2,6 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import CartonBingo from "../components/CartonBingo.vue";
+import Introuvable from "../components/Introuvable.vue";
 import TableauManches from "../components/TableauManches.vue";
 import { BINGO_TIER_KEYS, BINGO_TIER_LABELS } from "../lib/bingoScoring";
 import { user } from "../lib/auth";
@@ -129,7 +130,15 @@ async function deleteMatch() {
     </div>
     <p v-else-if="loading" class="muted">Chargement…</p>
     <p v-else-if="loadError" class="muted">Impossible de charger cette partie pour le moment.</p>
-    <p v-else-if="notFound" class="muted">Cette partie n'existe pas.</p>
+    <Introuvable
+      v-else-if="notFound"
+      title="Partie introuvable"
+      message="Cette partie n'existe pas, ou plus. Elle a peut-être été supprimée."
+      primary-label="Voir l'historique"
+      primary-to="/historique"
+      secondary-label="Retour à l'accueil"
+      secondary-to="/"
+    />
 
     <div v-else class="partie-detail">
       <div>

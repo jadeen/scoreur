@@ -272,13 +272,17 @@ describe("Partie", () => {
     expect(wrapper.find(".box .muted").text()).toBe("Chez Hugo, première partie d'Inès.");
   });
 
-  it("affiche un message quand la partie n'existe pas", async () => {
+  it("affiche la page introuvable quand la partie n'existe pas", async () => {
     user.value = { email: "lea@example.fr" };
     mockMatchTable({ select: { data: null, error: null } });
     const wrapper = mountPartie();
     await flushPromises();
 
-    expect(wrapper.find(".muted").text()).toBe("Cette partie n'existe pas.");
+    expect(wrapper.find("h1.h1").text()).toBe("Partie introuvable");
+    const actions = wrapper.findAll(".introuvable__actions .btn");
+    expect(actions[0].text()).toBe("Voir l'historique");
+    expect(actions[0].attributes("href")).toBe("#/historique");
+    expect(actions[1].text()).toBe("Retour à l'accueil");
   });
 
   it("affiche un message d'erreur si le chargement échoue", async () => {

@@ -201,12 +201,19 @@ describe("Jeu", () => {
     expect(wrapper.find("h1.h1").text()).toBe("Odin");
   });
 
-  it("affiche un message quand le jeu n'existe pas", async () => {
+  it("affiche la page introuvable avec le slug recherché quand le jeu n'existe pas", async () => {
     mockGameResponse({ data: null });
-    const wrapper = mountJeu({ slug: "inconnu" });
+    const wrapper = mountJeu({ slug: "monopoly" });
     await flushPromises();
 
-    expect(wrapper.find(".muted").text()).toBe("Ce jeu n'existe pas.");
+    expect(wrapper.find(".label").text()).toBe("Jeu introuvable");
+    expect(wrapper.find("h1.h1").text()).toBe("Pas dans la boîte");
+    expect(wrapper.find(".introuvable__message").text()).toBe(
+      "Aucun jeu du catalogue ne correspond à « monopoly ». Il a peut-être changé de nom.",
+    );
+    const actions = wrapper.findAll(".introuvable__actions .btn");
+    expect(actions[0].text()).toBe("Voir tous les jeux");
+    expect(actions[1].text()).toBe("Retour à l'accueil");
   });
 
   it("affiche un message d'erreur si le chargement échoue", async () => {
@@ -355,11 +362,11 @@ describe("Jeu", () => {
     mockGameResponse({ data: null });
     const wrapper = mountJeu({ slug: "inconnu" });
     await flushPromises();
-    expect(wrapper.find(".muted").text()).toBe("Ce jeu n'existe pas.");
+    expect(wrapper.find("h1.h1").text()).toBe("Pas dans la boîte");
 
     user.value = { email: "lea@example.fr" };
     await flushPromises();
 
-    expect(wrapper.find(".muted").text()).toBe("Ce jeu n'existe pas.");
+    expect(wrapper.find("h1.h1").text()).toBe("Pas dans la boîte");
   });
 });
