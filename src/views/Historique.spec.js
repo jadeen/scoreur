@@ -7,7 +7,7 @@ import Historique from "./Historique.vue";
 
 vi.mock("../lib/auth", async () => {
   const { ref } = await import("vue");
-  return { user: ref(null) };
+  return { user: ref(null), signInWithGoogle: vi.fn() };
 });
 
 vi.mock("../lib/supabase", () => ({
@@ -51,7 +51,8 @@ describe("Historique", () => {
     mockMatchesTable({ data: [makeMatch()] });
     const wrapper = mountHistorique();
 
-    expect(wrapper.find(".note").text()).toBe(
+    expect(wrapper.find("h1.h1").text()).toBe("Historique privé");
+    expect(wrapper.find(".introuvable__message").text()).toBe(
       "Connecte-toi avec Google pour voir tes parties passées.",
     );
     expect(supabase.from).not.toHaveBeenCalled();
@@ -143,8 +144,6 @@ describe("Historique", () => {
     user.value = null;
     await flushPromises();
 
-    expect(wrapper.find(".note").text()).toBe(
-      "Connecte-toi avec Google pour voir tes parties passées.",
-    );
+    expect(wrapper.find("h1.h1").text()).toBe("Historique privé");
   });
 });

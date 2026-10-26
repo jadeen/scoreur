@@ -2,10 +2,11 @@
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import CartonBingo from "../components/CartonBingo.vue";
+import ConnexionRequise from "../components/ConnexionRequise.vue";
 import Introuvable from "../components/Introuvable.vue";
 import TableauManches from "../components/TableauManches.vue";
 import { BINGO_TIER_KEYS, BINGO_TIER_LABELS } from "../lib/bingoScoring";
-import { signInWithGoogle, user } from "../lib/auth";
+import { user } from "../lib/auth";
 import { formatDateLong } from "../lib/formatDate";
 import { odinLedgerRows } from "../lib/odinScoring";
 import { rankPlayers } from "../lib/ranking";
@@ -125,17 +126,11 @@ async function deleteMatch() {
 
 <template>
   <div>
-    <Introuvable
+    <ConnexionRequise
       v-if="!user"
-      eyebrow="Connexion requise"
       title="Partie privée"
       message="Connecte-toi avec Google pour revoir cette partie."
-    >
-      <template #actions>
-        <button class="btn primary" type="button" @click="signInWithGoogle">Se connecter</button>
-        <router-link class="btn" to="/">Retour à l'accueil</router-link>
-      </template>
-    </Introuvable>
+    />
     <p v-else-if="loading" class="muted">Chargement…</p>
     <p v-else-if="loadError" class="muted">Impossible de charger cette partie pour le moment.</p>
     <Introuvable

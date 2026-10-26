@@ -53,7 +53,7 @@ describe("App", () => {
       .find((a) => a.text() === "Mes joueurs");
     await link.trigger("click");
     await flushPromises();
-    expect(wrapper.find("h1.h1").text()).toBe("Mes joueurs");
+    expect(wrapper.find("h1.h1").text()).toBe("Carnet privé");
   });
 
   it("active le lien Jeux une fois sur /jeux", async () => {
