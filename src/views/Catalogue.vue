@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import VignetteJeu from "../components/VignetteJeu.vue";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
@@ -98,7 +99,7 @@ onMounted(async () => {
           class="item"
           :to="{ name: 'jeu', params: { slug: game.slug } }"
         >
-          <div class="ph item-thumb" :style="{ background: game.color }" />
+          <VignetteJeu class="item-thumb" :name="game.name" :color="game.color" />
           <div class="t">
             <strong>{{ game.name }}</strong>
             <div class="item-tags">

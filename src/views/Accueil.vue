@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
+import VignetteJeu from "../components/VignetteJeu.vue";
 import { signInWithGoogle, user } from "../lib/auth";
 import { formatDateShort } from "../lib/formatDate";
 import { playersCountLabel, winnersSummary } from "../lib/matchSummary";
@@ -96,11 +97,7 @@ watch(
               class="tile"
               :to="{ name: 'nouvelle-partie', params: { slug: game.slug } }"
             >
-              <div
-                class="ph accueil-tile-thumb"
-                :style="{ background: game.color }"
-                aria-hidden="true"
-              ></div>
+              <VignetteJeu class="accueil-tile-thumb" :name="game.name" :color="game.color" />
               <strong>{{ game.name }}</strong>
               <span class="muted">{{ formatDateShort(game.playedAt) }}</span>
             </router-link>
@@ -179,11 +176,7 @@ watch(
           class="box"
           :to="{ name: 'jeu', params: { slug: game.slug } }"
         >
-          <div
-            class="ph accueil-game-thumb"
-            :style="{ background: game.color }"
-            aria-hidden="true"
-          ></div>
+          <VignetteJeu class="accueil-game-thumb" :name="game.name" :color="game.color" />
           <strong>{{ game.name }}</strong>
           <span class="tag">{{ playersLabel(game) }}</span>
         </router-link>

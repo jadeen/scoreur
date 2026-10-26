@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import Introuvable from "../components/Introuvable.vue";
+import VignetteJeu from "../components/VignetteJeu.vue";
 import { user } from "../lib/auth";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
@@ -96,7 +97,7 @@ watch(user, () => {
 
     <div v-else class="jeu-layout">
       <div class="jeu-main">
-        <div class="ph jeu-ban" :style="{ background: game.color }" />
+        <VignetteJeu class="jeu-ban" :name="game.name" :color="game.color" />
         <h1 class="h1">{{ game.name }}</h1>
         <div class="chips">
           <span v-for="trait in traitChips" :key="trait" class="tag">{{ trait }}</span>

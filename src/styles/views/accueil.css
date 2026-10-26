@@ -66,6 +66,7 @@
 .accueil-game-thumb {
   height: 64px;
   background: var(--paper-separator);
+  font-size: 36px;
 }
 
 /* Carte papier, identique en mobile et en desktop */
@@ -97,6 +98,7 @@
 
   .accueil-game-thumb {
     height: 110px;
+    font-size: 64px;
   }
 }
 
@@ -134,11 +136,13 @@
 .accueil-tile-thumb {
   width: 100%;
   height: 48px;
+  font-size: 28px;
 }
 
 @media (min-width: 1024px) {
   .accueil-tile-thumb {
     height: 96px;
+    font-size: 56px;
   }
 }
 
