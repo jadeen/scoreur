@@ -88,6 +88,7 @@ describe("Partie", () => {
   it("affiche le jeu, la date, le vainqueur et le classement", async () => {
     user.value = { email: "lea@example.fr" };
     mockMatchTable({ select: { data: makeMatchDetail(), error: null } });
+    await router.push("/partie/42");
     const wrapper = mountPartie();
     await flushPromises();
 
@@ -106,6 +107,8 @@ describe("Partie", () => {
       expect.stringContaining("Hugo"),
       expect.stringContaining("Inès"),
     ]);
+
+    expect(document.title).toBe("Wizard du 23/10 · Scoreur");
 
     expect(wrapper.find(".box").exists()).toBe(false);
     expect(wrapper.find(".danger").text()).toBe("Supprimer cette partie");

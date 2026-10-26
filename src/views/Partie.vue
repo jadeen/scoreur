@@ -7,8 +7,9 @@ import Introuvable from "../components/Introuvable.vue";
 import TableauManches from "../components/TableauManches.vue";
 import { BINGO_TIER_KEYS, BINGO_TIER_LABELS } from "../lib/bingoScoring";
 import { user } from "../lib/auth";
-import { formatDateLong } from "../lib/formatDate";
+import { formatDateLong, formatDateNumeric } from "../lib/formatDate";
 import { odinLedgerRows } from "../lib/odinScoring";
+import { setPageTitle } from "../lib/pageTitle";
 import { rankPlayers } from "../lib/ranking";
 import { supabase } from "../lib/supabase";
 import { wizardLedgerRows } from "../lib/wizardScoring";
@@ -48,6 +49,7 @@ async function loadMatch() {
     notFound.value = true;
   } else {
     match.value = data;
+    setPageTitle(`${data.games.name} du ${formatDateNumeric(data.played_at)}`);
   }
   loading.value = false;
 }

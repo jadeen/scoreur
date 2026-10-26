@@ -10,6 +10,7 @@ import Joueurs from "./views/Joueurs.vue";
 import MentionsLegales from "./views/MentionsLegales.vue";
 import NouvellePartie from "./views/NouvellePartie.vue";
 import Partie from "./views/Partie.vue";
+import { DEFAULT_TITLE } from "./lib/pageTitle";
 
 export const router = createRouter({
   history: createWebHashHistory(),
@@ -19,7 +20,7 @@ export const router = createRouter({
       path: "/jeux",
       name: "catalogue",
       component: Catalogue,
-      meta: { back: { to: "/", label: "Accueil" } },
+      meta: { back: { to: "/", label: "Accueil" }, title: "Jeux · Scoreur" },
     },
     {
       path: "/jeu/:slug",
@@ -38,13 +39,13 @@ export const router = createRouter({
       path: "/joueurs",
       name: "joueurs",
       component: Joueurs,
-      meta: { back: { to: "/", label: "Accueil" } },
+      meta: { back: { to: "/", label: "Accueil" }, title: "Joueurs · Scoreur" },
     },
     {
       path: "/historique",
       name: "historique",
       component: Historique,
-      meta: { back: { to: "/", label: "Accueil" } },
+      meta: { back: { to: "/", label: "Accueil" }, title: "Historique · Scoreur" },
     },
     {
       path: "/partie/:id",
@@ -57,19 +58,19 @@ export const router = createRouter({
       path: "/compte",
       name: "compte",
       component: Compte,
-      meta: { back: { to: "/", label: "Accueil" } },
+      meta: { back: { to: "/", label: "Accueil" }, title: "Mon compte · Scoreur" },
     },
     {
       path: "/mentions-legales",
       name: "mentions-legales",
       component: MentionsLegales,
-      meta: { back: { to: "/compte", label: "Mon compte" } },
+      meta: { back: { to: "/compte", label: "Mon compte" }, title: "Mentions légales · Scoreur" },
     },
     {
       path: "/confidentialite",
       name: "confidentialite",
       component: Confidentialite,
-      meta: { back: { to: "/compte", label: "Mon compte" } },
+      meta: { back: { to: "/compte", label: "Mon compte" }, title: "Confidentialité · Scoreur" },
     },
     {
       path: "/:pathMatch(.*)*",
@@ -85,4 +86,8 @@ export const router = createRouter({
       },
     },
   ],
+});
+
+router.afterEach((to) => {
+  document.title = to.meta.title ?? DEFAULT_TITLE;
 });

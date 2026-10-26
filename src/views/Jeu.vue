@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import Introuvable from "../components/Introuvable.vue";
 import VignetteJeu from "../components/VignetteJeu.vue";
 import { user } from "../lib/auth";
+import { setPageTitle } from "../lib/pageTitle";
 import { displayTags, playersLabel } from "../lib/playersLabel";
 import { supabase } from "../lib/supabase";
 
@@ -59,8 +60,10 @@ watch(
       error.value = fetchError.message;
     } else if (!data) {
       notFound.value = true;
+      setPageTitle("Jeu introuvable");
     } else {
       game.value = data;
+      setPageTitle(game.value.name);
     }
     loading.value = false;
 

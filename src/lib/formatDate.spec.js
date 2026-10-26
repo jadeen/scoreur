@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDateLong, formatDateShort } from "./formatDate";
+import { formatDateLong, formatDateNumeric, formatDateShort } from "./formatDate";
 
 describe("formatDateShort", () => {
   it("affiche le jour et le mois abrégé, sans l'année", () => {
@@ -10,5 +10,11 @@ describe("formatDateShort", () => {
 describe("formatDateLong", () => {
   it("affiche le jour de la semaine en capitale, le quantième et le mois en entier", () => {
     expect(formatDateLong("2026-10-23T12:00:00Z")).toBe("Vendredi 23 octobre");
+  });
+});
+
+describe("formatDateNumeric", () => {
+  it("affiche le jour et le mois en chiffres, séparés par un slash", () => {
+    expect(formatDateNumeric("2026-10-25T12:00:00Z")).toBe("25/10");
   });
 });

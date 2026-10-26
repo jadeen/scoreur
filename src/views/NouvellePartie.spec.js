@@ -95,6 +95,7 @@ describe("NouvellePartie", () => {
 
   it("invite à se connecter une fois le jeu chargé", async () => {
     mockTables({ game: makeGame() });
+    await router.push("/jeu/wizard/partie");
     const wrapper = mountPartie();
     await flushPromises();
 
@@ -102,6 +103,7 @@ describe("NouvellePartie", () => {
     expect(wrapper.find(".introuvable__message").text()).toBe(
       "Connecte-toi avec Google pour enregistrer une partie.",
     );
+    expect(document.title).toBe("Nouvelle partie · Wizard · Scoreur");
   });
 
   it("affiche un message quand le jeu n'existe pas", async () => {
