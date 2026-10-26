@@ -33,11 +33,15 @@ function hideBanner() {
       <router-link class="back-link" :to="route.meta.back.to"
         >‹ {{ route.meta.back.label }}</router-link
       >
-      <router-link class="logo" to="/">Scoreur</router-link>
+      <router-link class="logo" to="/"
+        ><img class="logo__img" src="/logo-horizontal.svg" alt="Scoreur"
+      /></router-link>
       <span class="topbar__spacer" aria-hidden="true"></span>
     </div>
     <div v-else class="topbar">
-      <router-link class="logo" to="/">Scoreur</router-link>
+      <router-link class="logo" to="/"
+        ><img class="logo__img" src="/logo-horizontal.svg" alt="Scoreur"
+      /></router-link>
       <router-link v-if="user" class="who" to="/compte" aria-label="Mon compte">
         <span class="avatar" aria-hidden="true">{{
           userDisplayName(user).charAt(0).toUpperCase()
@@ -47,7 +51,9 @@ function hideBanner() {
     </div>
     <nav class="desktop-nav">
       <div class="desktop-nav__inner">
-        <router-link class="logo" to="/">Scoreur</router-link>
+        <router-link class="logo" to="/"
+          ><img class="logo__img" src="/logo-horizontal.svg" alt="Scoreur"
+        /></router-link>
         <router-link class="link" active-class="on" to="/">Accueil</router-link>
         <router-link class="link" active-class="on" to="/jeux">Jeux</router-link>
         <router-link class="link" active-class="on" to="/joueurs">Mes joueurs</router-link>

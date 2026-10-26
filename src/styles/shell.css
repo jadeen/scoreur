@@ -68,13 +68,15 @@ a:hover {
 }
 
 .logo {
-  font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--text);
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
-  font-size: 20px;
+}
+
+.logo__img {
+  display: block;
+  height: 26px;
+  width: auto;
 }
 
 .label {
@@ -137,8 +139,11 @@ a:hover {
 
 .topbar--back .logo {
   flex: 1 1 0;
-  text-align: center;
-  font-size: 18px;
+  justify-content: center;
+}
+
+.topbar--back .logo__img {
+  height: 22px;
 }
 
 .topbar--back .topbar__spacer {
