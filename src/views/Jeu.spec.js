@@ -90,6 +90,7 @@ describe("Jeu", () => {
         scoring_summary: "Annonce exacte : 20 points + 10 par pli. Sinon −10 par pli d'écart.",
       },
     });
+    await router.push("/jeu/wizard");
     const wrapper = mountJeu({ slug: "wizard" });
     await flushPromises();
 
@@ -106,6 +107,7 @@ describe("Jeu", () => {
       "Connecte-toi pour enregistrer une partie de Wizard et suivre tes statistiques.",
     );
     expect(wrapper.find(".jeu-main .btn").exists()).toBe(false);
+    expect(document.title).toBe("Wizard · Scoreur");
   });
 
   it("propose une nouvelle partie et ses stats à la place de l'invite de connexion quand connecté", async () => {
@@ -203,6 +205,7 @@ describe("Jeu", () => {
 
   it("affiche la page introuvable avec le slug recherché quand le jeu n'existe pas", async () => {
     mockGameResponse({ data: null });
+    await router.push("/jeu/monopoly");
     const wrapper = mountJeu({ slug: "monopoly" });
     await flushPromises();
 
@@ -214,6 +217,7 @@ describe("Jeu", () => {
     const actions = wrapper.findAll(".introuvable__actions .btn");
     expect(actions[0].text()).toBe("Voir tous les jeux");
     expect(actions[1].text()).toBe("Retour à l'accueil");
+    expect(document.title).toBe("Jeu introuvable · Scoreur");
   });
 
   it("affiche un message d'erreur si le chargement échoue", async () => {

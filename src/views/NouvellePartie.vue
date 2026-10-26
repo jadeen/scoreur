@@ -12,6 +12,7 @@ import { bingoCardIssues, bingoScore, emptyCard } from "../lib/bingoScoring";
 import { user } from "../lib/auth";
 import { clearDraft, loadDraft, saveDraft } from "../lib/draft";
 import { ODIN_DEFAULT_TARGET, ODIN_MAX_TARGET, ODIN_MIN_TARGET } from "../lib/odinScoring";
+import { setPageTitle } from "../lib/pageTitle";
 import { playersLabel } from "../lib/playersLabel";
 import { rankPlayers } from "../lib/ranking";
 import { supabase } from "../lib/supabase";
@@ -62,6 +63,7 @@ async function loadGame() {
   game.value = data;
   gameNotFound.value = !data;
   gameLoading.value = false;
+  if (data) setPageTitle(`Nouvelle partie · ${data.name}`);
 }
 
 function sortedPlayers() {
