@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
+import ConnexionRequise from "../components/ConnexionRequise.vue";
 import { user } from "../lib/auth";
 import { supabase } from "../lib/supabase";
 
@@ -155,15 +156,17 @@ async function deletePlayer(player) {
 </script>
 
 <template>
-  <div>
+  <ConnexionRequise
+    v-if="!user"
+    title="Carnet privé"
+    message="Connecte-toi avec Google pour gérer ton carnet de joueurs."
+  />
+
+  <template v-else>
     <h1 class="h1">Mes joueurs</h1>
     <p class="muted">Les joueurs n'ont pas de compte : ce sont des noms dans ton carnet.</p>
 
-    <div v-if="!user" class="note connect-note">
-      Connecte-toi avec Google pour gérer ton carnet de joueurs.
-    </div>
-
-    <div v-else class="joueurs-layout">
+    <div class="joueurs-layout">
       <form class="add" @submit.prevent="addPlayer">
         <input
           v-model="newName"
@@ -245,5 +248,5 @@ async function deletePlayer(player) {
       </div>
       <p v-if="moiError" class="muted error-moi">{{ moiError }}</p>
     </div>
-  </div>
+  </template>
 </template>

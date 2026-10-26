@@ -1,12 +1,13 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { user } from "../lib/auth";
+import { router } from "../router";
 import { supabase } from "../lib/supabase";
 import Joueurs from "./Joueurs.vue";
 
 vi.mock("../lib/auth", async () => {
   const { ref } = await import("vue");
-  return { user: ref(null) };
+  return { user: ref(null), signInWithGoogle: vi.fn() };
 });
 
 vi.mock("../lib/supabase", () => ({
@@ -55,9 +56,10 @@ describe("Joueurs", () => {
 
   it("invite à se connecter quand personne n'est connecté", () => {
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
 
-    expect(wrapper.find(".note").text()).toBe(
+    expect(wrapper.find("h1.h1").text()).toBe("Carnet privé");
+    expect(wrapper.find(".introuvable__message").text()).toBe(
       "Connecte-toi avec Google pour gérer ton carnet de joueurs.",
     );
     expect(wrapper.find(".add").exists()).toBe(false);
@@ -67,7 +69,7 @@ describe("Joueurs", () => {
   it("affiche un état de chargement avant la réponse de Supabase", () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
 
     expect(wrapper.find(".state-loading").text()).toBe("Chargement du carnet…");
   });
@@ -75,7 +77,7 @@ describe("Joueurs", () => {
   it("affiche la liste des joueurs, « moi » en tête avec son badge", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const items = wrapper.findAll(".item");
@@ -89,7 +91,7 @@ describe("Joueurs", () => {
   it("affiche un message quand le carnet est vide", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: [], error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     expect(wrapper.find(".state-empty").text()).toBe("Ton carnet est vide pour l'instant.");
@@ -98,7 +100,7 @@ describe("Joueurs", () => {
   it("affiche un message d'erreur si le chargement échoue", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: null, error: { message: "boom" } } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     expect(wrapper.find(".state-error").text()).toBe(
@@ -109,16 +111,14 @@ describe("Joueurs", () => {
   it("vide le carnet et affiche l'invite de connexion quand l'utilisateur se déconnecte", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
     expect(wrapper.findAll(".item")).toHaveLength(3);
 
     user.value = null;
     await flushPromises();
 
-    expect(wrapper.find(".note").text()).toBe(
-      "Connecte-toi avec Google pour gérer ton carnet de joueurs.",
-    );
+    expect(wrapper.find("h1.h1").text()).toBe("Carnet privé");
   });
 
   it("ajoute un joueur et recharge le carnet", async () => {
@@ -132,7 +132,7 @@ describe("Joueurs", () => {
       select: () => ({ order: () => Promise.resolve({ data: loaded, error: null }) }),
       insert,
     });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     await wrapper.find('input[aria-label="Nom du joueur"]').setValue("Tom");
@@ -147,7 +147,7 @@ describe("Joueurs", () => {
   it("ne tente pas d'ajouter un nom vide ou fait seulement d'espaces", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
     supabase.from.mockClear();
 
@@ -166,7 +166,7 @@ describe("Joueurs", () => {
       select: { data: makePlayers(), error: null },
       insert: () => ({ error: { code: "23505" } }),
     });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     await wrapper.find('input[aria-label="Nom du joueur"]').setValue("Léa");
@@ -182,7 +182,7 @@ describe("Joueurs", () => {
       select: { data: makePlayers(), error: null },
       insert: () => ({ error: { code: "500" } }),
     });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     await wrapper.find('input[aria-label="Nom du joueur"]').setValue("Tom");
@@ -196,7 +196,7 @@ describe("Joueurs", () => {
     user.value = { email: "lea@example.fr" };
     const update = vi.fn(() => ({ error: null }));
     mockPlayersTable({ select: { data: makePlayers(), error: null }, update });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];
@@ -212,7 +212,7 @@ describe("Joueurs", () => {
   it("ne tente pas de renommer avec un nom vide ou fait seulement d'espaces", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
     supabase.from.mockClear();
 
@@ -230,7 +230,7 @@ describe("Joueurs", () => {
   it("annule un renommage sans appeler Supabase", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
     supabase.from.mockClear();
 
@@ -249,7 +249,7 @@ describe("Joueurs", () => {
       select: { data: makePlayers(), error: null },
       update: () => ({ error: { code: "23505" } }),
     });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];
@@ -265,7 +265,7 @@ describe("Joueurs", () => {
     user.value = { email: "lea@example.fr" };
     const update = vi.fn(() => ({ error: null }));
     mockPlayersTable({ select: { data: makePlayers(), error: null }, update });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];
@@ -288,7 +288,7 @@ describe("Joueurs", () => {
     ];
     const update = vi.fn(() => ({ error: null }));
     mockPlayersTable({ select: { data: noMoi, error: null }, update });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[0];
@@ -302,7 +302,7 @@ describe("Joueurs", () => {
   it("n'affiche pas « Marquer comme moi » pour le joueur déjà « moi »", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const moiItem = wrapper.findAll(".item")[0];
@@ -315,7 +315,7 @@ describe("Joueurs", () => {
       select: { data: makePlayers(), error: null },
       update: (values) => ({ error: values.is_me === false ? { code: "500" } : null }),
     });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];
@@ -331,7 +331,7 @@ describe("Joueurs", () => {
       select: { data: makePlayers(), error: null },
       update: (values) => ({ error: values.is_me === true ? { code: "500" } : null }),
     });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];
@@ -353,7 +353,7 @@ describe("Joueurs", () => {
         error: null,
       },
     });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const items = wrapper.findAll(".item");
@@ -365,7 +365,7 @@ describe("Joueurs", () => {
   it("affiche un bouton Supprimer pour les joueurs autres que « moi »", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];
@@ -379,7 +379,7 @@ describe("Joueurs", () => {
   it("demande confirmation avant de supprimer un joueur", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];
@@ -394,7 +394,7 @@ describe("Joueurs", () => {
   it("annule la suppression d'un joueur sans appeler Supabase", async () => {
     user.value = { email: "lea@example.fr" };
     mockPlayersTable({ select: { data: makePlayers(), error: null } });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
     supabase.from.mockClear();
 
@@ -410,7 +410,7 @@ describe("Joueurs", () => {
     user.value = { email: "lea@example.fr" };
     const del = vi.fn(() => ({ error: null }));
     mockPlayersTable({ select: { data: makePlayers(), error: null }, del });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];
@@ -430,7 +430,7 @@ describe("Joueurs", () => {
       select: { data: makePlayers(), error: null },
       del: () => ({ error: { code: "500" } }),
     });
-    wrapper = mount(Joueurs);
+    wrapper = mount(Joueurs, { global: { plugins: [router] } });
     await flushPromises();
 
     const hugoItem = wrapper.findAll(".item")[1];

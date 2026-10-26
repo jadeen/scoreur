@@ -4,6 +4,7 @@ import Catalogue from "./views/Catalogue.vue";
 import Compte from "./views/Compte.vue";
 import Confidentialite from "./views/Confidentialite.vue";
 import Historique from "./views/Historique.vue";
+import Introuvable from "./components/Introuvable.vue";
 import Jeu from "./views/Jeu.vue";
 import Joueurs from "./views/Joueurs.vue";
 import MentionsLegales from "./views/MentionsLegales.vue";
@@ -69,6 +70,19 @@ export const router = createRouter({
       name: "confidentialite",
       component: Confidentialite,
       meta: { back: { to: "/compte", label: "Mon compte" } },
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "introuvable",
+      component: Introuvable,
+      props: {
+        title: "Hors du plateau",
+        message: "Cette page n'existe pas, ou plus. Le lien est peut-être mal copié.",
+        primaryLabel: "Retour à l'accueil",
+        primaryTo: "/",
+        secondaryLabel: "Voir les jeux",
+        secondaryTo: "/jeux",
+      },
     },
   ],
 });

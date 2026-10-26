@@ -53,7 +53,7 @@ describe("App", () => {
       .find((a) => a.text() === "Mes joueurs");
     await link.trigger("click");
     await flushPromises();
-    expect(wrapper.find("h1.h1").text()).toBe("Mes joueurs");
+    expect(wrapper.find("h1.h1").text()).toBe("Carnet privé");
   });
 
   it("active le lien Jeux une fois sur /jeux", async () => {
@@ -93,6 +93,16 @@ describe("App", () => {
     await router.isReady();
 
     expect(wrapper.find(".topbar--back .back-link").text()).toBe("‹ Jeux");
+  });
+
+  it("affiche la page introuvable sur une adresse inconnue", async () => {
+    await router.push("/une-adresse-qui-n-existe-pas");
+    await router.isReady();
+    const wrapper = mount(App, { global: { plugins: [router] } });
+    await router.isReady();
+
+    expect(wrapper.find("h1.h1").text()).toBe("Hors du plateau");
+    expect(wrapper.find(".topbar--back").exists()).toBe(false);
   });
 
   it("déclenche la connexion Google au clic sur Se connecter, mobile et desktop", async () => {

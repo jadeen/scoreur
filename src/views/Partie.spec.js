@@ -1,13 +1,13 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { user } from "../lib/auth";
+import { signInWithGoogle, user } from "../lib/auth";
 import { router } from "../router";
 import { supabase } from "../lib/supabase";
 import Partie from "./Partie.vue";
 
 vi.mock("../lib/auth", async () => {
   const { ref } = await import("vue");
-  return { user: ref(null) };
+  return { user: ref(null), signInWithGoogle: vi.fn() };
 });
 
 vi.mock("../lib/supabase", () => ({
@@ -59,12 +59,22 @@ describe("Partie", () => {
     user.value = null;
   });
 
-  it("invite à se connecter quand personne n'est connecté", () => {
+  it("invite à se connecter quand personne n'est connecté", async () => {
     mockMatchTable({ select: { data: makeMatchDetail(), error: null } });
     const wrapper = mountPartie();
 
-    expect(wrapper.find(".note").text()).toBe("Connecte-toi avec Google pour revoir tes parties.");
+    expect(wrapper.find("h1.h1").text()).toBe("Partie privée");
+    expect(wrapper.find(".introuvable__message").text()).toBe(
+      "Connecte-toi avec Google pour revoir cette partie.",
+    );
     expect(supabase.from).not.toHaveBeenCalled();
+
+    const actions = wrapper.findAll(".introuvable__actions .btn");
+    expect(actions[0].text()).toBe("Se connecter");
+    await actions[0].trigger("click");
+    expect(signInWithGoogle).toHaveBeenCalledTimes(1);
+    expect(actions[1].text()).toBe("Retour à l'accueil");
+    expect(actions[1].attributes("href")).toBe("#/");
   });
 
   it("affiche un état de chargement avant la réponse de Supabase", () => {
@@ -272,13 +282,17 @@ describe("Partie", () => {
     expect(wrapper.find(".box .muted").text()).toBe("Chez Hugo, première partie d'Inès.");
   });
 
-  it("affiche un message quand la partie n'existe pas", async () => {
+  it("affiche la page introuvable quand la partie n'existe pas", async () => {
     user.value = { email: "lea@example.fr" };
     mockMatchTable({ select: { data: null, error: null } });
     const wrapper = mountPartie();
     await flushPromises();
 
-    expect(wrapper.find(".muted").text()).toBe("Cette partie n'existe pas.");
+    expect(wrapper.find("h1.h1").text()).toBe("Partie introuvable");
+    const actions = wrapper.findAll(".introuvable__actions .btn");
+    expect(actions[0].text()).toBe("Voir l'historique");
+    expect(actions[0].attributes("href")).toBe("#/historique");
+    expect(actions[1].text()).toBe("Retour à l'accueil");
   });
 
   it("affiche un message d'erreur si le chargement échoue", async () => {

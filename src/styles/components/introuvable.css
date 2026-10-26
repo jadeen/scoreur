@@ -1,0 +1,65 @@
+/* Page introuvable (route inconnue, jeu inconnu, partie inconnue) : illustration + titre + actions, centrés mobile, en ligne desktop */
+.introuvable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 0 40px;
+  text-align: center;
+}
+
+.introuvable__illustration {
+  width: 264px;
+  height: 140px;
+  flex-shrink: 0;
+}
+
+.introuvable__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.introuvable__message {
+  max-width: 300px;
+}
+
+.introuvable__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media (min-width: 1024px) {
+  .introuvable {
+    flex-direction: row;
+    align-items: center;
+    gap: 64px;
+    padding: 40px 0;
+  }
+
+  .introuvable__illustration {
+    width: 396px;
+    height: 210px;
+  }
+
+  .introuvable__content {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .introuvable__message {
+    max-width: 420px;
+  }
+
+  .introuvable__actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto;
+  }
+}
