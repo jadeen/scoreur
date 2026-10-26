@@ -42,4 +42,16 @@ describe("Introuvable", () => {
 
     expect(wrapper.find(".label").text()).toBe("Jeu introuvable");
   });
+
+  it("permet de remplacer les actions par défaut via le slot actions", () => {
+    const wrapper = mount(Introuvable, {
+      props: { title: "Partie privée", message: "Connecte-toi pour continuer." },
+      slots: { actions: '<button class="btn primary">Se connecter</button>' },
+      global: { plugins: [router] },
+    });
+
+    const actions = wrapper.findAll(".introuvable__actions .btn");
+    expect(actions).toHaveLength(1);
+    expect(actions[0].text()).toBe("Se connecter");
+  });
 });

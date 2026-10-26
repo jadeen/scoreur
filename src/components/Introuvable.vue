@@ -3,10 +3,10 @@ defineProps({
   eyebrow: { type: String, default: "Erreur 404" },
   title: { type: String, required: true },
   message: { type: String, required: true },
-  primaryLabel: { type: String, required: true },
-  primaryTo: { type: String, required: true },
-  secondaryLabel: { type: String, required: true },
-  secondaryTo: { type: String, required: true },
+  primaryLabel: { type: String, default: null },
+  primaryTo: { type: String, default: null },
+  secondaryLabel: { type: String, default: null },
+  secondaryTo: { type: String, default: null },
 });
 </script>
 
@@ -59,8 +59,10 @@ defineProps({
       <h1 class="h1">{{ title }}</h1>
       <p class="muted introuvable__message">{{ message }}</p>
       <div class="introuvable__actions">
-        <router-link class="btn primary" :to="primaryTo">{{ primaryLabel }}</router-link>
-        <router-link class="btn" :to="secondaryTo">{{ secondaryLabel }}</router-link>
+        <slot name="actions">
+          <router-link class="btn primary" :to="primaryTo">{{ primaryLabel }}</router-link>
+          <router-link class="btn" :to="secondaryTo">{{ secondaryLabel }}</router-link>
+        </slot>
       </div>
     </div>
   </div>
