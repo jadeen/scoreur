@@ -1,0 +1,10 @@
+.vignette-jeu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-tile);
+  font-family: var(--font-display);
+  color: var(--paper);
+  line-height: 1;
+  font-size: 28px;
+}

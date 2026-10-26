@@ -10,6 +10,7 @@
 @import "./components/feuille-wizard.css";
 @import "./components/carton-bingo.css";
 @import "./components/introuvable.css";
+@import "./components/vignette-jeu.css";
 @import "./views/accueil.css";
 @import "./views/catalogue.css";
 @import "./views/joueurs.css";
